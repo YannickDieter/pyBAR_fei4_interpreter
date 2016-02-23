@@ -9,7 +9,7 @@ This package can be used to interpred raw data from the ATLAS FE-I4 taken with t
 
 The following packages are required for pyBAR's ATLAS FE-I4 interpreter:
   ```
-  numpy cython
+  numpy cython tables
   ```
 
 ## Usage
