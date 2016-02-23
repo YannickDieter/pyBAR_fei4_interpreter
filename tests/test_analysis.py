@@ -4,7 +4,6 @@
 import unittest
 import tables as tb
 import numpy as np
-from pixel_clusterizer.clusterizer import HitClusterizer
 
 from pybar_fei4_interpreter import analysis_utils
 from pybar_fei4_interpreter import data_struct
@@ -103,7 +102,6 @@ class TestAnalysis(unittest.TestCase):
         for i in range(50):
             interpreter = PyDataInterpreter()
             histogram = PyDataHistograming()
-            clusterizer = HitClusterizer()
             del interpreter
             del histogram
             del clusterizer
