@@ -1,5 +1,5 @@
 
-# pyBAR_fei4_interpreter [![Code Status](https://landscape.io/github/SiLab-Bonn/pyBAR_fei4_interpreter/master/landscape.svg?style=flat)](https://landscape.io/github/SiLab-Bonn/pyBAR_fei4_interpreter/master) [![Build Status](https://travis-ci.org/SiLab-Bonn/pyBAR_fei4_interpreter.svg?branch=master)](https://travis-ci.org/SiLab-Bonn/pyBAR_fei4_interpreter) [![Build Status](https://ci.appveyor.com/api/projects/status/github/SiLab-Bonn/pyBAR_fei4_interpreter?svg=true)](https://ci.appveyor.com/project/DavidLP/pyBAR_fei4_interpreter-71xwl)
+# pyBAR_fei4_interpreter [![Build Status](https://travis-ci.org/SiLab-Bonn/pyBAR_fei4_interpreter.svg?branch=master)](https://travis-ci.org/SiLab-Bonn/pyBAR_fei4_interpreter) [![Build Status](https://ci.appveyor.com/api/projects/status/github/SiLab-Bonn/pyBAR_fei4_interpreter?svg=true)](https://ci.appveyor.com/project/DavidLP/pyBAR_fei4_interpreter-71xwl)
 
 pyBAR_fei4_interpreter - A ATLAS FE-I4 raw data interpreter in Python and C++
 
