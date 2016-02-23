@@ -22,3 +22,9 @@ install:
 
 test_script:
   - nosetests
+  
+after_test:
+  - python setup.py bdist_wheel
+
+artifacts:
+  - path: dist\*
