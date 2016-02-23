@@ -1,10 +1,5 @@
 include README.* VERSION
-recursive-include docs *
 recursive-include examples *
-recursive-include firmware *
 recursive-include tests *
-include pybar *.yaml *.bit
-recursive-include pybar/config *
-recursive-include pybar/analysis *
-recursive-exclude pybar/analysis/RawDataConverter/build *
+recursive-include pybar_fei4_interpreter *
 global-exclude *.pyc .project .pydevproject build
