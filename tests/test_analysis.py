@@ -2,10 +2,8 @@
 '''
 
 import unittest
-import os
 import tables as tb
 import numpy as np
-import progressbar
 from pixel_clusterizer.clusterizer import HitClusterizer
 
 from pybar_fei4_interpreter import analysis_utils
@@ -102,8 +100,6 @@ class TestAnalysis(unittest.TestCase):
         pass
 
     def test_libraries_stability(self):  # calls 50 times the constructor and destructor to check the libraries
-        progress_bar = progressbar.ProgressBar(widgets=['', progressbar.Percentage(), ' ', progressbar.Bar(marker='*', left='|', right='|'), ' ', progressbar.ETA()], maxval=50, term_width=80)
-        progress_bar.start()
         for i in range(50):
             interpreter = PyDataInterpreter()
             histogram = PyDataHistograming()
@@ -111,8 +107,6 @@ class TestAnalysis(unittest.TestCase):
             del interpreter
             del histogram
             del clusterizer
-            progress_bar.update(i)
-        progress_bar.finish()
 
     def test_data_alignement(self):  # Test if the data alignment is correct (important to detect 32/64 bit related issues)
         hits = np.empty((1,), dtype=[('event_number', np.uint64),
