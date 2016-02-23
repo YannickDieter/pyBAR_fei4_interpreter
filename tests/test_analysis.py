@@ -1,6 +1,7 @@
 ''' Script to check the correctness of the analysis. The analysis is done on raw data and all results are compared to a recorded analysis.
 '''
 
+import os
 import unittest
 import tables as tb
 import numpy as np
@@ -11,7 +12,7 @@ from pybar_fei4_interpreter.data_interpreter import PyDataInterpreter
 from pybar_fei4_interpreter.data_histograming import PyDataHistograming
 
 
-tests_data_folder = 'test_analysis/'
+tests_data_folder = r'tests/test_analysis/'
 
 
 def convert_data_array(array, filter_func=None, converter_func=None):  # TODO: add copy parameter, otherwise in-place
@@ -31,24 +32,21 @@ def convert_data_array(array, filter_func=None, converter_func=None):  # TODO: a
     data_array : numpy.array
         Data numpy array of specified dimension (converter_func) and content (filter_func)
     '''
-#     if filter_func != None:
-#         if not hasattr(filter_func, '__call__'):
-#             raise ValueError('Filter is not callable')
     if filter_func:
         array = array[filter_func(array)]
-#     if converter_func != None:
-#         if not hasattr(converter_func, '__call__'):
-#             raise ValueError('Converter is not callable')
     if converter_func:
         array = converter_func(array)
     return array
 
+
 def is_data_record(value):
     return np.logical_and(np.logical_and(np.less_equal(np.bitwise_and(value, 0x00FE0000), 0x00A00000), np.less_equal(np.bitwise_and(value, 0x0001FF00), 0x00015000)), np.logical_and(np.not_equal(np.bitwise_and(value, 0x00FE0000), 0x00000000), np.not_equal(np.bitwise_and(value, 0x0001FF00), 0x00000000)))
+
 
 def get_col_row_array_from_data_record_array(array):
     col, row, _ = get_col_row_tot_array_from_data_record_array(array)
     return col, row
+
 
 def get_col_row_tot_array_from_data_record_array(array):  # TODO: max ToT
     '''Convert raw data array to column, row, and ToT array
@@ -64,25 +62,16 @@ def get_col_row_tot_array_from_data_record_array(array):  # TODO: max ToT
     '''
     def get_col_row_tot_1_array_from_data_record_array(value):
         return np.right_shift(np.bitwise_and(value, 0x00FE0000), 17), np.right_shift(np.bitwise_and(value, 0x0001FF00), 8), np.right_shift(np.bitwise_and(value, 0x000000F0), 4)
-#         return (value & 0xFE0000)>>17, (value & 0x1FF00)>>8, (value & 0x0000F0)>>4 # numpy.vectorize()
 
     def get_col_row_tot_2_array_from_data_record_array(value):
         return np.right_shift(np.bitwise_and(value, 0x00FE0000), 17), np.add(np.right_shift(np.bitwise_and(value, 0x0001FF00), 8), 1), np.bitwise_and(value, 0x0000000F)
-#         return (value & 0xFE0000)>>17, ((value & 0x1FF00)>>8)+1, (value & 0x0000F) # numpy.vectorize()
 
     col_row_tot_1_array = np.column_stack(get_col_row_tot_1_array_from_data_record_array(array))
     col_row_tot_2_array = np.column_stack(get_col_row_tot_2_array_from_data_record_array(array))
-#     print col_row_tot_1_array, col_row_tot_1_array.shape, col_row_tot_1_array.dtype
-#     print col_row_tot_2_array, col_row_tot_2_array.shape, col_row_tot_2_array.dtype
-    # interweave array here
     col_row_tot_array = np.vstack((col_row_tot_1_array.T, col_row_tot_2_array.T)).reshape((3, -1), order='F').T  # http://stackoverflow.com/questions/5347065/interweaving-two-numpy-arrays
-#     print col_row_tot_array, col_row_tot_array.shape, col_row_tot_array.dtype
-    # remove ToT > 14 (late hit, no hit) from array, remove row > 336 in case we saw hit in row 336 (no double hit possible)
     try:
         col_row_tot_array_filtered = col_row_tot_array[col_row_tot_array[:, 2] < 14]  # [np.logical_and(col_row_tot_array[:,2]<14, col_row_tot_array[:,1]<=336)]
-#         print col_row_tot_array_filtered, col_row_tot_array_filtered.shape, col_row_tot_array_filtered.dtype
     except IndexError:
-        # logging.warning('Array is empty')
         return np.array([], dtype=np.dtype('>u4')), np.array([], dtype=np.dtype('>u4')), np.array([], dtype=np.dtype('>u4'))
     return col_row_tot_array_filtered[:, 0], col_row_tot_array_filtered[:, 1], col_row_tot_array_filtered[:, 2]  # column, row, ToT
 
@@ -104,7 +93,6 @@ class TestAnalysis(unittest.TestCase):
             histogram = PyDataHistograming()
             del interpreter
             del histogram
-            del clusterizer
 
     def test_data_alignement(self):  # Test if the data alignment is correct (important to detect 32/64 bit related issues)
         hits = np.empty((1,), dtype=[('event_number', np.uint64),
@@ -205,7 +193,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertTrue(exception_ok & np.all(array == array_fast))
 
     def test_3d_index_histograming(self):  # check compiled hist_3D_index function
-        with tb.open_file(tests_data_folder + 'hist_data.h5', mode="r") as in_file_h5:
+        with tb.open_file(os.path.join(tests_data_folder + 'hist_data.h5'), mode="r") as in_file_h5:
             xyz = in_file_h5.root.HistDataXYZ[:]
             x, y, z = xyz[0], xyz[1], xyz[2]
             shape = (100, 100, 100)
@@ -222,6 +210,6 @@ class TestAnalysis(unittest.TestCase):
             self.assertTrue(exception_ok & np.all(array == array_fast))
 
 if __name__ == '__main__':
-    tests_data_folder = 'test_analysis//'
+    tests_data_folder = r'test_analysis/'
     suite = unittest.TestLoader().loadTestsFromTestCase(TestAnalysis)
     unittest.TextTestRunner(verbosity=2).run(suite)
