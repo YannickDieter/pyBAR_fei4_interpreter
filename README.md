@@ -13,9 +13,15 @@ The following packages are required for pyBAR's ATLAS FE-I4 interpreter:
   ```
 
 ## Usage
+```
+from pybar_fei4_interpreter.data_interpreter import PyDataInterpreter
+interpreter = PyDataInterpreter()  # Initialize interpretation module
+raw_data = np.array([73175087, 73044495, 73058863, 73194895, 73197919, 73093151], np.uint32)  # Some raw data to interpret
+interpreter.interpret_raw_data(raw_data)  ä Start the raw data interpretation
+print interpreter.get_hits()  # Print the hits in the raw data
+```
 
-Please note the [Wiki](https://github.com/SiLab-Bonn/pyBAR/wiki) and the [User Guide](https://github.com/SiLab-Bonn/pyBAR/wiki/User-Guide).
-
+Als take a look at the example folder.
 ## Support
 
 To subscribe to the pyBAR mailing list, click [here](https://e-groups.cern.ch/e-groups/EgroupsSubscription.do?egroupName=pybar-devel). Please ask questions on the pyBAR mailing list [pybar-devel@cern.ch](mailto:pybar-devel@cern.ch?subject=bug%20report%20%2F%20feature%20request) (subscription required) or file a new bug report / feature request [here](https://github.com/SiLab-Bonn/pyBAR_fei4_interpreter/issues/new).
