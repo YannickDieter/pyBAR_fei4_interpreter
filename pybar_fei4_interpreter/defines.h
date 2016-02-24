@@ -104,7 +104,7 @@ const size_t __MAXHITBUFFERSIZE=4000000;     //maximum buffer array size for the
 
 //event error codes
 const unsigned int __N_ERROR_CODES=16;            //number of event error codes
-const unsigned int __NO_ERROR=0;                 //no error
+const unsigned int __NO_ERROR=0;                  //no error
 const unsigned int __HAS_SR=1;                    //the event has service records
 const unsigned int __NO_TRG_WORD=2;               //the event has no trigger word, is ok for not external triggering
 const unsigned int __NON_CONST_LVL1ID=4;          //LVL1ID changes in one event, is ok for self triggering
@@ -117,6 +117,7 @@ const unsigned int __TDC_WORD=256;             	  //Event has a TDC word
 const unsigned int __MANY_TDC_WORDS=512;          //Event has more than one valid TDC word (event has more than one TDC word in normal use mode or event has more than one valid TDC word in TRG delay mode)
 const unsigned int __TDC_OVERFLOW=1024;           //Event has TDC word indicating a TDC overflow (value overflow in normal use mode and +no in time TDC in TRG delay use mode)
 const unsigned int __NO_HIT=2048;           	  //Events without any hit, usefull for trigger number debugging
+const unsigned int __OTHER_WORD=4096;             //Events with words not related to the FEI4 readout
 
 //trigger error codes
 const unsigned int __TRG_N_ERROR_CODES=8;         //number of trigger error codes
@@ -150,11 +151,10 @@ const unsigned int RAW_DATA_MAX_ROW=336;
 #define TRIGGER_NUMBER_MACRO_NEW(X)	(TRIGGER_NUMBER_MASK_NEW & X) //calculates the trigger number from a trigger word
 #define TRIGGER_TIME_STAMP_MACRO(X)	(TRIGGER_TIME_STAMP_MASK & X) //calculates the trigger time stamp from a trigger word
 
-//FE number macros
-#define NFE_HEADER_MASK 0xF0000000  //first bit 0 means FE number word
-#define NFE_NUMBER_MASK 0x0F000000
-#define NFE_WORD_MACRO(X) (((NFE_HEADER_MASK & X) == 0) ? true : false)
-#define NFE_NUMBER_MACRO(X) ((NFE_NUMBER_MASK & X)  >> 24)
+// Other word macros (for data not directly related to FEI4, like another device like mimosa writes into the data stream)
+#define OTHER_WORD_HEADER 0x20000000
+#define OTHER_WORD_MASK 0xF0000000  //first bit 0 means FE number word
+#define OTHER_WORD_MACRO(X) (((OTHER_WORD_MASK & X) == OTHER_WORD_HEADER) ? true : false)
 
 //TDC macros
 #define __N_TDC_VALUES 4096

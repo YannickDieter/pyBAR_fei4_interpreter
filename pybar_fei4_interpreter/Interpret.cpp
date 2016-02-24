@@ -561,6 +561,7 @@ void Interpret::printSummary()
 	std::cout << "\t9\t" << _errorCounter[9] << "\tEvents with > 1 TDC words\n";
 	std::cout << "\t10\t" << _errorCounter[10] << "\tEvents with TDC overflow\n";
 	std::cout << "\t11\t" << _errorCounter[11] << "\tEvents with no hits\n";
+	std::cout << "\t12\t" << _errorCounter[12] << "\tEvents with other words (not used yet)\n";
 
 	std::cout << "#TriggerErrorCounters \n";
 	std::cout << "\t0\t" << _triggerErrorCounter[0] << "\tTrigger number not increasing by 1\n";
@@ -923,7 +924,7 @@ bool Interpret::isValueRecord(const unsigned int& pSRAMWORD, unsigned int& rValu
 
 bool Interpret::isOtherWord(const unsigned int& pSRAMWORD)
 {
-	if (ADDRESS_RECORD_MACRO(pSRAMWORD) || VALUE_RECORD_MACRO(pSRAMWORD))
+	if (ADDRESS_RECORD_MACRO(pSRAMWORD) || VALUE_RECORD_MACRO(pSRAMWORD || OTHER_WORD_MACRO(pSRAMWORD)))
 		return true;
 	return false;
 }
