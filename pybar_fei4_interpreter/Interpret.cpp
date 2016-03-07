@@ -256,7 +256,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			}
 		}
 		else {
-			if (isOtherWord(tActualWord)) {			//other for hit interpreting uninteressting data, else data word unknown
+			if (isOtherWord(tActualWord)) { // other data words
 				_nOtherWords++;
 				if (Basis::debugSet()) {
 					unsigned int tAddress = 0;
@@ -273,7 +273,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					}
 				}
 			}
-			else {
+			else { // remaining data words, unknown words
 				addEventErrorCode(__UNKNOWN_WORD);
 				_nUnknownWords++;
 				if (Basis::warningSet())
@@ -924,7 +924,7 @@ bool Interpret::isValueRecord(const unsigned int& pSRAMWORD, unsigned int& rValu
 
 bool Interpret::isOtherWord(const unsigned int& pSRAMWORD)
 {
-	if (ADDRESS_RECORD_MACRO(pSRAMWORD) || VALUE_RECORD_MACRO(pSRAMWORD || OTHER_WORD_MACRO(pSRAMWORD)))
+	if (ADDRESS_RECORD_MACRO(pSRAMWORD) || VALUE_RECORD_MACRO(pSRAMWORD) || OTHER_WORD_MACRO(pSRAMWORD))
 		return true;
 	return false;
 }

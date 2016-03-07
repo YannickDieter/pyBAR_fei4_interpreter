@@ -144,23 +144,18 @@ const unsigned int RAW_DATA_MIN_ROW=1;
 const unsigned int RAW_DATA_MAX_ROW=336;
 
 //trigger word macros
-#define TRIGGER_WORD_HEADER_MASK_NEW 0x80000000   //first bit 1 means trigger word
-#define TRIGGER_NUMBER_MASK_NEW		0x7FFFFFFF      //trigger number is in the low word
-#define TRIGGER_TIME_STAMP_MASK		0x7FFFFFFF      //trigger number is in the low word
-#define TRIGGER_WORD_MACRO_NEW(X)			(((TRIGGER_WORD_HEADER_MASK_NEW & X) == TRIGGER_WORD_HEADER_MASK_NEW) ? true : false) //true if data word is trigger word
+#define TRIGGER_WORD_HEADER_MASK_NEW 0x80000000 // 1xxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx, x may contain user data
+#define TRIGGER_NUMBER_MASK_NEW		0x7FFFFFFF //trigger number is in the low word
+#define TRIGGER_TIME_STAMP_MASK		0x7FFFFFFF //trigger number is in the low word
+#define TRIGGER_WORD_MACRO_NEW(X)	(((TRIGGER_WORD_HEADER_MASK_NEW & X) == TRIGGER_WORD_HEADER_MASK_NEW) ? true : false) //true if data word is trigger word
 #define TRIGGER_NUMBER_MACRO_NEW(X)	(TRIGGER_NUMBER_MASK_NEW & X) //calculates the trigger number from a trigger word
 #define TRIGGER_TIME_STAMP_MACRO(X)	(TRIGGER_TIME_STAMP_MASK & X) //calculates the trigger time stamp from a trigger word
-
-// Other word macros (for data not directly related to FEI4, like another device like mimosa writes into the data stream)
-#define OTHER_WORD_HEADER 0x20000000
-#define OTHER_WORD_MASK 0xF0000000  //first bit 0 means FE number word
-#define OTHER_WORD_MACRO(X) (((OTHER_WORD_MASK & X) == OTHER_WORD_HEADER) ? true : false)
 
 //TDC macros
 #define __N_TDC_VALUES 4096
 #define __N_TDC_PIXEL_VALUES 2048
-#define TDC_HEADER 0x40000000
-#define TDC_HEADER_MASK 0xF0000000  //first bit 0 means FE number word
+#define TDC_HEADER 0x40000000 // 0100 xxxx xxxx xxxx xxxx xxxx xxxx xxxx, x may contain user data
+#define TDC_HEADER_MASK 0xF0000000 // select TDC header, no one-hot header
 #define TDC_COUNT_MASK 0x00000FFF
 #define TDC_TIME_STAMP_MASK 0x0FFFF000  // time stamp (running counter) to compare e.g. with trigger time stamp or TDC word counter, 16 bit, 8 bit if the TDC distribution macro is activated
 #define TDC_TRIG_DIST_MASK 0x0FF00000  // delay between trigger and TDC leading edge
@@ -168,6 +163,13 @@ const unsigned int RAW_DATA_MAX_ROW=336;
 #define TDC_COUNT_MACRO(X) (TDC_COUNT_MASK & X)
 #define TDC_TIME_STAMP_MACRO(X) ((TDC_TIME_STAMP_MASK & X) >> 12)
 #define TDC_TRIG_DIST_MACRO(X) ((TDC_TRIG_DIST_MASK & X) >> 20)
+
+// Other word macros (for data not directly related to FEI4, another module writing to SRAM with one-hot header)
+#define OTHER_WORD_HEADER_3 0x20000000 // 001x xxxx xxxx xxxx xxxx xxxx xxxx xxxx, x may contain user data
+#define OTHER_WORD_MASK_3 0xE0000000 // select one-hot header
+#define OTHER_WORD_HEADER_4 0x10000000 // 0001 xxxx xxxx xxxx xxxx xxxx xxxx xxxx, x may contain user data
+#define OTHER_WORD_MASK_4 0xF0000000 // select one-hot header
+#define OTHER_WORD_MACRO(X) ((((OTHER_WORD_MASK_3 & X) == OTHER_WORD_HEADER_3) | ((OTHER_WORD_MASK_4 & X) == OTHER_WORD_HEADER_4)) ? true : false)
 
 // Data Header (DH)
 #define DATA_HEADER						0x00E90000
