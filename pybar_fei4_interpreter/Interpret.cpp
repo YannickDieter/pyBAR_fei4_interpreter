@@ -81,9 +81,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			setWarningOutput(false);  // FIXME: do not unset this always
 		}
 
-		correlateMetaWordIndex(_nEvents, _dataWordIndex);
 		_nDataWords++;
-		_dataWordIndex++;
 		unsigned int tActualWord = pDataWords[iWord];			//take the actual SRAM word
 		tActualTot1 = -1;												          //TOT1 value stays negative if it can not be set properly in getHitsfromDataRecord()
 		tActualTot2 = -1;												          //TOT2 value stays negative if it can not be set properly in getHitsfromDataRecord()
@@ -293,6 +291,8 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			tStartBCID = tActualBCID;
 			tStartLVL1ID = tActualLVL1ID;
 		}
+		correlateMetaWordIndex(_nEvents, _dataWordIndex);
+		_dataWordIndex++;
 		tNdataWords++;
 	}
 	return true;
