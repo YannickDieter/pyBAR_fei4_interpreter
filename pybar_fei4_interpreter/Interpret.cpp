@@ -590,6 +590,7 @@ void Interpret::printStatus()
 	std::cout << "_maxTdcDelay " << _maxTdcDelay << "\n";
 
 	std::cout << "\none event variables\n";
+	std::cout << "tNdataWords " << tNdataWords << "\n";
 	std::cout << "tNdataHeader " << tNdataHeader << "\n";
 	std::cout << "tNdataRecord " << tNdataRecord << "\n";
 	std::cout << "tStartBCID " << tStartBCID << "\n";
