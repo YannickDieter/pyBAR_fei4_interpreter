@@ -293,6 +293,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			tStartBCID = tActualBCID;
 			tStartLVL1ID = tActualLVL1ID;
 		}
+		tNdataWords++;
 	}
 	return true;
 }
@@ -407,6 +408,7 @@ void Interpret::resetCounters()
 
 void Interpret::resetEventVariables()
 {
+	tNdataWords = 0;
 	tNdataHeader = 0;
 	tNdataRecord = 0;
 	tDbCID = 0;
@@ -755,7 +757,7 @@ void Interpret::addEvent()
 		if (_actualMetaWordIndex < _metaWordIndexLength) {
 			_metaWordIndex[_actualMetaWordIndex].eventIndex = _nEvents;
 			_metaWordIndex[_actualMetaWordIndex].startWordIdex = _startWordIndex;
-			_metaWordIndex[_actualMetaWordIndex].stopWordIdex = _nDataWords - 1;
+			_metaWordIndex[_actualMetaWordIndex].stopWordIdex = _startWordIndex + tNdataWords; // excluding stop word index
 			_startWordIndex = _nDataWords - 1;
 			_actualMetaWordIndex++;
 		}

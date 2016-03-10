@@ -146,9 +146,10 @@ private:
 	bool _alignAtTdcWord;							//set to true to force event recognision by tdc word if event before is complete
 	bool _useTdcTriggerTimeStamp;				//set to true to use the TDC trigger distance to fill the TDC time stamp otherwise use counter
 	bool _useTriggerTimeStamp;					//set to true to use the trigger value as a clock count
-	unsigned int _maxTriggerNumber;       		//maximum trigger trigger number
+	unsigned int _maxTriggerNumber;				//maximum trigger trigger number
 
 	//one event variables
+	unsigned int tNdataWords;					//number of data words per event
 	unsigned int tNdataHeader;					//number of data header per event
 	unsigned int tNdataRecord;					//number of data records per event
 	unsigned int tStartBCID;					//BCID value of the first hit for the event window
