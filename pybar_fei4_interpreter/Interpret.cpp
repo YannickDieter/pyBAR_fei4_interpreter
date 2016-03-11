@@ -51,7 +51,7 @@ void Interpret::setStandardSettings()
 	_maxTdcDelay = 255;
 	_alignAtTdcWord = false;
 	_dataWordIndex = 0;
-	_maxTriggerNumber = 2 ^ 31 - 1;
+	_maxTriggerNumber = (2 ^ 31) - 1;
 }
 
 bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& pNdataWords)
