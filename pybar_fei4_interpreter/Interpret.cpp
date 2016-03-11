@@ -402,6 +402,7 @@ void Interpret::resetCounters()
 	_nTDCWords = 0;
 	_nOtherWords = 0;
 	_nHits = 0;
+	_nSmallHits = 0;
 	_nEmptyEvents = 0;
 	_nMaxHitsPerEvent = 0;
 	_firstTriggerNrSet = false;
@@ -629,6 +630,7 @@ void Interpret::printStatus()
 	std::cout << "_nDataRecords " << _nDataRecords << "\n";
 	std::cout << "_nDataHeaders " << _nDataHeaders << "\n";
 	std::cout << "_nHits " << _nHits << "\n";
+	std::cout << "_nSmallHits " << _nSmallHits << "\n";
 	std::cout << "_nDataWords " << _nDataWords << "\n";
 	std::cout << "_firstTriggerNrSet " << _firstTriggerNrSet << "\n";
 	std::cout << "_firstTdcSet " << _firstTdcSet << "\n";
@@ -874,12 +876,18 @@ bool Interpret::getHitsfromDataRecord(const unsigned int& pSRAMWORD, int& pColHi
 		pRowHit1 = DATA_RECORD_ROW1_MACRO(pSRAMWORD);
 		pTotHit1 = DATA_RECORD_TOT1_MACRO(pSRAMWORD);
 	}
+	if (DATA_RECORD_TOT1_MACRO(pSRAMWORD) == 14) {
+		_nSmallHits++;
+	}
 
 	//set second hit values
 	if (DATA_RECORD_TOT2_MACRO(pSRAMWORD) <= _maxTot) {	//ommit late/small hit and no hit (15) tot values for the TOT(2) hit
 		pColHit2 = DATA_RECORD_COLUMN2_MACRO(pSRAMWORD);
 		pRowHit2 = DATA_RECORD_ROW2_MACRO(pSRAMWORD);
 		pTotHit2 = DATA_RECORD_TOT2_MACRO(pSRAMWORD);
+	}
+	if (DATA_RECORD_TOT2_MACRO(pSRAMWORD) == 14) {
+		_nSmallHits++;
 	}
 	return true;
 	//}
