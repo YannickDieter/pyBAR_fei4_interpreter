@@ -17,7 +17,7 @@ The following packages are required for pyBAR's ATLAS FE-I4 interpreter:
 from pybar_fei4_interpreter.data_interpreter import PyDataInterpreter
 interpreter = PyDataInterpreter()  # Initialize interpretation module
 raw_data = np.array([73175087, 73044495, 73058863, 73194895, 73197919, 73093151], np.uint32)  # Some raw data to interpret
-interpreter.interpret_raw_data(raw_data)  ä Start the raw data interpretation
+interpreter.interpret_raw_data(raw_data)  # Start the raw data interpretation
 print interpreter.get_hits()  # Print the hits in the raw data
 ```
 
