@@ -28,6 +28,7 @@ void Histogram::setStandardSettings()
 	_occupancy = 0;
 	_relBcid = 0;
 	_tot = 0;
+	_meanTot = 0;
 	_tdc = 0;
 	_totPixel = 0;
 	_tdcPixel = 0;
@@ -35,6 +36,7 @@ void Histogram::setStandardSettings()
 	_createOccHist = false;
 	_createRelBCIDhist = false;
 	_createTotHist = false;
+	_createMeanTotHist = false;
 	_createTdcHist = false;
 	_createTdcPixelHist = false;
 	_createTotPixelHist = false;
@@ -44,6 +46,8 @@ void Histogram::setStandardSettings()
 void Histogram::createOccupancyHist(bool CreateOccHist)
 {
 	_createOccHist = CreateOccHist;
+	if (!CreateOccHist)
+		deleteOccupancyArray();
 }
 
 void Histogram::createRelBCIDHist(bool CreateRelBCIDHist)
@@ -66,6 +70,15 @@ void Histogram::createTotHist(bool CreateTotHist)
 	}
 	else
 		deleteTotArray();
+}
+
+void Histogram::createMeanTotHist(bool CreateMeanTotHist)
+{
+	_createMeanTotHist = CreateMeanTotHist;
+	if (_createMeanTotHist)
+		createOccupancyHist(true);
+	else
+		deleteMeanTotArray();
 }
 
 void Histogram::createTdcHist(bool CreateTdcHist)
@@ -120,7 +133,7 @@ void Histogram::addHits(HitInfo*& rHitInfo, const unsigned int& rNhits)
 			throw std::out_of_range("Row index out of range.");
 		unsigned int tTot = rHitInfo[i].tot;
 		if(tTot > 15)
-			throw std::out_of_range("Tot index out of range.");
+			throw std::out_of_range("ToT index out of range.");
 		unsigned int tTdc = rHitInfo[i].TDC;
 		if(tTdc >= __N_TDC_VALUES)
 			throw std::out_of_range("TDC counter " + IntToStr(tTdc) + " index out of range.");
@@ -135,13 +148,25 @@ void Histogram::addHits(HitInfo*& rHitInfo, const unsigned int& rNhits)
 			error("addHits: tParIndex "+IntToStr(tParIndex)+"\t> "+IntToStr(_NparameterValues));
 			throw std::out_of_range("Parameter index out of range.");
 		}
-		if(_createOccHist)
+		if(_createOccHist){
 			if(tTot <= _maxTot){
 				if(_occupancy!=0)
 					_occupancy[(size_t)tColumnIndex + (size_t)tRowIndex * (size_t)RAW_DATA_MAX_COLUMN + (size_t)tParIndex * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW] += 1;
 				else
-					throw std::runtime_error("Occupancy array not intitialized. Set scan parameter first!.");
+					throw std::runtime_error("Occupancy array not initialized. Set scan parameter first!.");
+				if(_createMeanTotHist){
+					if(_meanTot!=0){
+						float tOccupancy = (float)_occupancy[(size_t)tColumnIndex + (size_t)tRowIndex * (size_t)RAW_DATA_MAX_COLUMN + (size_t)tParIndex * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW];
+						float tMeanTot = _meanTot[(size_t)tColumnIndex + (size_t)tRowIndex * (size_t)RAW_DATA_MAX_COLUMN + (size_t)tParIndex * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW];
+						if(std::isnan(tMeanTot)) // check for NAN, _meanTot initialized with NAN
+							tMeanTot = 0.0;
+						_meanTot[(size_t)tColumnIndex + (size_t)tRowIndex * (size_t)RAW_DATA_MAX_COLUMN + (size_t)tParIndex * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW] = (tMeanTot * (tOccupancy - 1) + tTot)/tOccupancy;
+					}
+					else
+						throw std::runtime_error("Mean ToT array not initialized. Set scan parameter first!.");
+				}
 			}
+		}
 		if(_createRelBCIDhist)
 			if(tTot <= _maxTot)
 				_relBcid[tRelBcid] += 1;
@@ -191,7 +216,7 @@ void Histogram::addClusterSeedHits(ClusterInfo*& rClusterInfo, const unsigned in
 			if(_occupancy!=0)
 				_occupancy[(size_t)tColumnIndex + (size_t)tRowIndex * (size_t)RAW_DATA_MAX_COLUMN + (size_t)tParIndex * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW] += 1;
 			else
-				throw std::runtime_error("Occupancy array not intitialized. Set scan parameter first!.");
+				throw std::runtime_error("Occupancy array not initialized. Set scan parameter first!.");
 		}
 	}
 }
@@ -241,6 +266,10 @@ void Histogram::addScanParameter(int*& rParInfo, const unsigned int& rNparInfoLe
 	if (_createOccHist){
 		allocateOccupancyArray();
 		resetOccupancyArray();
+		if (_createMeanTotHist){
+			allocateMeanTotArray();
+			resetMeanTotArray();
+		}
 	}
 	if (Basis::debugSet()){
 	  for(unsigned int i=0; i<_nParInfoLength; ++i)
@@ -289,6 +318,37 @@ void Histogram::resetOccupancyArray()
   }
 }
 
+void Histogram::allocateMeanTotArray()
+{
+  debug("allocateMeanTotArray() with "+IntToStr(getNparameters())+" parameters");
+  deleteMeanTotArray();
+  try{
+    _meanTot = new float[(size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW * (size_t)getNparameters()];
+  }
+  catch(std::bad_alloc& exception){
+    error(std::string("allocateMeanTotArray: ")+std::string(exception.what()));
+  }
+}
+
+void Histogram::deleteMeanTotArray()
+{
+  debug("deleteMeanTotArray()");
+  if (_meanTot != 0)
+    delete[] _meanTot;
+  _meanTot = 0;
+}
+
+void Histogram::resetMeanTotArray()
+{
+  info("resetMeanTotArray()");
+  if (_meanTot != 0){
+	  for (unsigned int i = 0; i < RAW_DATA_MAX_COLUMN; i++)
+		for (unsigned int j = 0; j < RAW_DATA_MAX_ROW; j++)
+		  for(unsigned int k = 0; k < getNparameters();k++)
+			  _meanTot[(size_t)i + (size_t)j * (size_t)RAW_DATA_MAX_COLUMN + (size_t)k * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW] = NAN;
+  }
+}
+
 void Histogram::resetTdcPixelArray()
 {
   info("resetTdcPixelArray()");
@@ -315,7 +375,7 @@ void Histogram::resetTotPixelArray()
 				  _totPixel[(size_t)i + (size_t)j * (size_t)RAW_DATA_MAX_COLUMN + (size_t)k * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW] = 0;
 	  }
 	  else
-		  throw std::runtime_error("Output TOT pixel array array not set.");
+		  throw std::runtime_error("Output ToT pixel array array not set.");
   }
 }
 
@@ -496,6 +556,19 @@ void Histogram::getTotHist(unsigned int*& rTotHist, bool copy)
 	  rTotHist = _tot;
 }
 
+void Histogram::getMeanTot(unsigned int& rNparameterValues, float*& rMeanTot, bool copy)
+{
+  debug("getMeanTot(...)");
+  if(copy){
+	  unsigned int tArrayLength = (size_t)(RAW_DATA_MAX_COLUMN-1) + (size_t)(RAW_DATA_MAX_ROW-1) * (size_t)RAW_DATA_MAX_COLUMN + (size_t)(_NparameterValues-1) * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW+1;
+	  std::copy(_meanTot, _meanTot+tArrayLength, rMeanTot);
+  }
+  else
+	  rMeanTot = _meanTot;
+
+  rNparameterValues = _NparameterValues;
+}
+
 void Histogram::getTdcHist(unsigned int*& rTdcHist, bool copy)
 {
   debug("getTdcHist(...)");
@@ -535,10 +608,10 @@ void Histogram::getTdcPixelHist(unsigned short*& rTdcPixelHist, bool copy)
 void Histogram::calculateThresholdScanArrays(double rMuArray[], double rSigmaArray[], const unsigned int& rMaxInjections, const unsigned int& min_parameter, const unsigned int& max_parameter)
 {
   debug("calculateThresholdScanArrays(...)");
-  //quick algorithm from M. Mertens, phd thesis, Juelich 2010
+  //quick algorithm from M. Mertens, PhD thesis, FZ Juelich 2010
 
   if(_occupancy==0)
-	  throw std::runtime_error("Occupancy array not intitialized. Set scan parameter first!.");
+	  throw std::runtime_error("Occupancy array not initialized. Set scan parameter first!.");
 
   if (_NparameterValues<2)  //a minimum number of different scans is needed
     return;
@@ -580,6 +653,8 @@ void Histogram::setNoScanParameter()
   _NparameterValues = 1;
   allocateOccupancyArray();
   resetOccupancyArray();
+  allocateMeanTotArray();
+  resetMeanTotArray();
 }
 
 void Histogram::reset()
@@ -587,6 +662,7 @@ void Histogram::reset()
 	info("reset()");
 	resetOccupancyArray();
 	resetTotArray();
+	resetMeanTotArray();
 	resetTdcArray();
 	resetTotPixelArray();
 	resetTdcPixelArray();

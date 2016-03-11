@@ -29,6 +29,7 @@ cdef extern from "Histogram.h":
 
         void createOccupancyHist(cpp_bool CreateOccHist)
         void createRelBCIDHist(cpp_bool CreateRelBCIDHist)
+        void createMeanTotHist(cpp_bool CreateMeanTotHist)
         void createTotHist(cpp_bool CreateTotHist)
         void createTdcHist(cpp_bool CreateTdcPixelHist)
         void createTdcPixelHist(cpp_bool CreateTdcPixelHist)
@@ -37,6 +38,7 @@ cdef extern from "Histogram.h":
 
         void getOccupancy(unsigned int& rNparameterValues, unsigned int*& rOccupancy, cpp_bool copy)  # returns the occupancy histogram for all hits
         void getTotHist(unsigned int*& rTotHist, cpp_bool copy)  # returns the tot histogram for all hits
+        void getMeanTot(unsigned int& rNparameterValues, float*& rOccupancy, cpp_bool copy)
         void getTdcHist(unsigned int*& rTdcHist, cpp_bool copy)
         void getRelBcidHist(unsigned int*& rRelBcidHist, cpp_bool copy)  # returns the relative BCID histogram for all hits
         void getTdcPixelHist(unsigned short*& rTdcPixelHist, cpp_bool copy)  # returns the tdc pixel histogram for all hits
@@ -67,8 +69,14 @@ cdef data_to_numpy_array_uint32(cnp.uint32_t* ptr, cnp.npy_intp N):
     #PyArray_ENABLEFLAGS(arr, np.NPY_OWNDATA)
     return arr
 
+cdef data_to_numpy_array_float(cnp.float32_t* ptr, cnp.npy_intp N):
+    cdef cnp.ndarray[cnp.float32_t, ndim=1] arr = cnp.PyArray_SimpleNewFromData(1, <cnp.npy_intp*> &N, cnp.NPY_FLOAT, <cnp.float32_t*> ptr)
+    #PyArray_ENABLEFLAGS(arr, np.NPY_OWNDATA)
+    return arr
+
 cdef cnp.uint16_t* data_16
 cdef cnp.uint32_t* data_32
+cdef cnp.float32_t* data_float
 cdef unsigned int Nparameter = 0
 
 cdef class PyDataHistograming:
@@ -91,6 +99,8 @@ cdef class PyDataHistograming:
         self.thisptr.createRelBCIDHist(<cpp_bool> toggle)
     def create_tot_hist(self,toggle):
         self.thisptr.createTotHist(<cpp_bool> toggle)
+    def create_mean_tot_hist(self,toggle):
+        self.thisptr.createMeanTotHist(<cpp_bool> toggle)
     def create_tdc_hist(self,toggle):
         self.thisptr.createTdcHist(<cpp_bool> toggle)
     def create_tdc_pixel_hist(self,toggle):
@@ -108,6 +118,11 @@ cdef class PyDataHistograming:
         self.thisptr.getTotHist(<unsigned int*&> data_32, <cpp_bool> False)
         if data_32 != NULL:
             return data_to_numpy_array_uint32(data_32, 16)
+    def get_mean_tot(self):
+        self.thisptr.getMeanTot(Nparameter, <float*&> data_float, <cpp_bool> False)
+        if data_float != NULL:
+            array = data_to_numpy_array_float(data_float, 80 * 336 * Nparameter)
+            return array.reshape((80, 336, Nparameter), order='F')  # make linear array to 3d array (col,row,parameter)
     def get_tdc_hist(self):
         self.thisptr.getTdcHist(<unsigned int*&> data_32, <cpp_bool> False)
         if data_32 != NULL:

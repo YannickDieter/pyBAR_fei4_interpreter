@@ -18,6 +18,7 @@ public:
   //get histograms
   void getOccupancy(unsigned int& rNparameterValues, unsigned int*& rOccupancy, bool copy = false);  //returns the occupancy histogram for all hits
   void getTotHist(unsigned int*& rTotHist, bool copy = false);           //returns the tot histogram for all hits
+  void getMeanTot(unsigned int& rNparameterValues, float*& rMeanTot, bool copy = false); //returns mean ToT per scan parameter for each pixel
   void getTdcHist(unsigned int*& rTdcHist, bool copy = false);           //returns the tdc histogram for all hits
   void getRelBcidHist(unsigned int*& rRelBcidHist, bool copy = false);   //returns the relative BCID histogram for all hits
   void getTotPixelHist(unsigned short*& rTotPixelHist, bool copy = false); //returns the tot pixel histogram
@@ -27,6 +28,7 @@ public:
   void createOccupancyHist(bool CreateOccHist = true);
   void createRelBCIDHist(bool CreateRelBCIDHist = true);
   void createTotHist(bool CreateTotHist = true);
+  void createMeanTotHist(bool CreateMeanTotHist = true);
   void createTdcHist(bool CreateTdcHist = true);
   void createTdcPixelHist(bool CreateTdcPixelHist = true);
   void createTotPixelHist(bool CreateTotPixelHist = true);
@@ -44,6 +46,7 @@ public:
 
   void resetOccupancyArray();
   void resetTotArray();
+  void resetMeanTotArray();
   void resetTdcArray();
   void resetTdcPixelArray();
   void resetTotPixelArray();
@@ -58,6 +61,8 @@ private:
   void allocateOccupancyArray();
   void deleteOccupancyArray();
   void allocateTotArray();
+  void allocateMeanTotArray();
+  void deleteMeanTotArray();
   void allocateTdcArray();
   void deleteTotArray();
   void deleteTdcArray();
@@ -69,11 +74,12 @@ private:
   void deleteTdcPixelArray();
   
   unsigned int* _occupancy;       //2d hit histogram for each parameter (in total 3d, linearly sorted via col, row, parameter)
-  unsigned int* _tot;             //tot histogram
-  unsigned int* _tdc;             //tdc histogram
-  unsigned short* _tdcPixel;      //3d pixel tdc histogram  (in total 3d, linearly sorted via col, row, tdc value)
-  unsigned short* _totPixel;      //3d pixel tot histogram  (in total 3d, linearly sorted via col, row, tot value)
-  unsigned int* _relBcid;         //realative BCID histogram
+  unsigned int* _tot;             //ToT histogram
+  float* _meanTot;                //2d hit mean ToT histogram for each parameter
+  unsigned int* _tdc;             //TDC histogram
+  unsigned short* _tdcPixel;      //3d pixel TDC histogram  (in total 3d, linearly sorted via col, row, tdc value)
+  unsigned short* _totPixel;      //3d pixel ToT histogram  (in total 3d, linearly sorted via col, row, tot value)
+  unsigned int* _relBcid;         //relative BCID histogram
 
   unsigned int getParIndex(int64_t& rEventNumber);      //returns the parameter index for the given event number
 
@@ -90,6 +96,7 @@ private:
   bool _createOccHist;
   bool _createRelBCIDhist;
   bool _createTotHist;
+  bool _createMeanTotHist;
   bool _createTdcHist;
   bool _createTdcPixelHist;
   bool _createTotPixelHist;
