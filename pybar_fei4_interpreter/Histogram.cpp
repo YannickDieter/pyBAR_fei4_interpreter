@@ -2,14 +2,14 @@
 
 Histogram::Histogram(void)
 {
-  setSourceFileName("Histogram");
+  setSourceFileName("Histogram()");
 //  setDebugOutput(true);
   setStandardSettings();
 }
 
 Histogram::~Histogram(void)
 {
-  debug("~Histogram(void): destructor called");
+  debug("~Histogram()");
   deleteOccupancyArray();
   deleteTotArray();
   deleteTdcArray();

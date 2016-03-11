@@ -2,7 +2,7 @@
 
 Interpret::Interpret(void)
 {
-	setSourceFileName("Interpret");
+	setSourceFileName("Interpret()");
 	setStandardSettings();
 	allocateHitArray();
 	allocateHitBufferArray();
@@ -15,7 +15,7 @@ Interpret::Interpret(void)
 
 Interpret::~Interpret(void)
 {
-	debug("~Interpret(void): destructor called");
+	debug("~Interpret()");
 	deleteHitArray();
 	deleteHitBufferArray();
 	deleteTriggerErrorCounterArray();
