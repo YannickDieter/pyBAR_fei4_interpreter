@@ -1,7 +1,7 @@
 
 # pyBAR_fei4_interpreter [![Build Status](https://travis-ci.org/SiLab-Bonn/pyBAR_fei4_interpreter.svg?branch=master)](https://travis-ci.org/SiLab-Bonn/pyBAR_fei4_interpreter) [![Build Status](https://ci.appveyor.com/api/projects/status/github/SiLab-Bonn/pyBAR_fei4_interpreter?svg=true)](https://ci.appveyor.com/project/DavidLP/pyBAR_fei4_interpreter-71xwl)
 
-pyBAR_fei4_interpreter - A ATLAS FE-I4 raw data interpreter in Python and C++
+pyBAR_fei4_interpreter - An ATLAS FE-I4 raw data interpreter in Python and C++
 
 This package can be used to interpred raw data from the ATLAS FE-I4 taken with the readout framework pyBAR. It also contains histogramming functions and interpretation tools. The interpretation takes place in fast C++ code to increase the speed.
 
