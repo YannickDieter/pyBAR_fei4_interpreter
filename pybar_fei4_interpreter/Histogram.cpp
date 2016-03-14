@@ -158,7 +158,7 @@ void Histogram::addHits(HitInfo*& rHitInfo, const unsigned int& rNhits)
 					if(_meanTot!=0){
 						float tOccupancy = (float)_occupancy[(size_t)tColumnIndex + (size_t)tRowIndex * (size_t)RAW_DATA_MAX_COLUMN + (size_t)tParIndex * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW];
 						float tMeanTot = _meanTot[(size_t)tColumnIndex + (size_t)tRowIndex * (size_t)RAW_DATA_MAX_COLUMN + (size_t)tParIndex * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW];
-						if(std::isnan(tMeanTot)) // check for NAN, _meanTot initialized with NAN
+						if(tMeanTot != tMeanTot) // check for NAN, _meanTot initialized with NAN
 							tMeanTot = 0.0;
 						_meanTot[(size_t)tColumnIndex + (size_t)tRowIndex * (size_t)RAW_DATA_MAX_COLUMN + (size_t)tParIndex * (size_t)RAW_DATA_MAX_COLUMN * (size_t)RAW_DATA_MAX_ROW] = (tMeanTot * (tOccupancy - 1) + tTot)/tOccupancy;
 					}
