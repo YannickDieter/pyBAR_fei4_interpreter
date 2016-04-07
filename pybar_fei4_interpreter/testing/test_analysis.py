@@ -14,10 +14,10 @@ from pybar_fei4_interpreter.data_histograming import PyDataHistograming
 
 
 # Get package path
-package_path = os.path.dirname(pybar_fei4_interpreter.__file__)  # Get the absoulte path of the online_monitor installation
+testing_path = os.path.dirname(__file__)  # Get the absoulte path of the online_monitor installation
 
 # Set the converter script path
-tests_data_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(package_path)) + r'/pyBAR_fei4_interpreter/testing/test_analysis_data/'))
+tests_data_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(testing_path)) + r'/testing/test_analysis_data/'))
 
 
 def convert_data_array(array, filter_func=None, converter_func=None):  # TODO: add copy parameter, otherwise in-place
