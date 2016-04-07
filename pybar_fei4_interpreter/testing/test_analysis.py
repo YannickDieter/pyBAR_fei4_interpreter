@@ -6,13 +6,18 @@ import unittest
 import tables as tb
 import numpy as np
 
+import pybar_fei4_interpreter
 from pybar_fei4_interpreter import analysis_utils
 from pybar_fei4_interpreter import data_struct
 from pybar_fei4_interpreter.data_interpreter import PyDataInterpreter
 from pybar_fei4_interpreter.data_histograming import PyDataHistograming
 
 
-tests_data_folder = r'tests/test_analysis/'
+# Get package path
+package_path = os.path.dirname(pybar_fei4_interpreter.__file__)  # Get the absoulte path of the online_monitor installation
+
+# Set the converter script path
+tests_data_folder = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(package_path)) + r'/pyBAR_fei4_interpreter/testing/test_analysis_data/'))
 
 
 def convert_data_array(array, filter_func=None, converter_func=None):  # TODO: add copy parameter, otherwise in-place
@@ -88,7 +93,7 @@ class TestAnalysis(unittest.TestCase):
         pass
 
     def test_libraries_stability(self):  # calls 50 times the constructor and destructor to check the libraries
-        for i in range(50):
+        for _ in range(50):
             interpreter = PyDataInterpreter()
             histogram = PyDataHistograming()
             del interpreter
@@ -193,7 +198,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertTrue(exception_ok & np.all(array == array_fast))
 
     def test_3d_index_histograming(self):  # check compiled hist_3D_index function
-        with tb.open_file(os.path.join(tests_data_folder + 'hist_data.h5'), mode="r") as in_file_h5:
+        with tb.open_file(os.path.join(tests_data_folder + '/hist_data.h5'), mode="r") as in_file_h5:
             xyz = in_file_h5.root.HistDataXYZ[:]
             x, y, z = xyz[0], xyz[1], xyz[2]
             shape = (100, 100, 100)
@@ -210,6 +215,5 @@ class TestAnalysis(unittest.TestCase):
             self.assertTrue(exception_ok & np.all(array == array_fast))
 
 if __name__ == '__main__':
-    tests_data_folder = r'test_analysis/'
     suite = unittest.TestLoader().loadTestsFromTestCase(TestAnalysis)
     unittest.TextTestRunner(verbosity=2).run(suite)
