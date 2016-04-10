@@ -78,6 +78,7 @@ cdef extern from "Interpret.h":
         unsigned int getHitSize()
 
         void reset()
+        void resetHistograms()
         void resetMetaDataCounter()
 
         unsigned int getNhits()
@@ -211,6 +212,8 @@ cdef class PyDataInterpreter:
         self.thisptr.reset()
     def reset_meta_data_counter(self):
         self.thisptr.resetMetaDataCounter()
+    def reset_histograms(self):
+        self.thisptr.resetHistograms()
     def get_n_hits(self):
         return <unsigned int> self.thisptr.getNhits()
     def get_n_events(self):

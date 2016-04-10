@@ -36,6 +36,7 @@ public:
 	//initializers, should be called before first call of interpretRawData() with new data file
 	void resetCounters();                                     						  //reset summary counters
 	void resetEventVariables();											              //resets event variables before starting new event
+	void resetHistograms();															  //reset the histograms (TDC, trigger error, event status ...)
 
 	//analysis options
 	void setHitsArraySize(const unsigned int &rSize);   			  //set the siye of the hit array, has to be able to hold hits of one event

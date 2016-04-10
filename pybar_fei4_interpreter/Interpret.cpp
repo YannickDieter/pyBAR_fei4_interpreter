@@ -437,6 +437,14 @@ void Interpret::resetEventVariables()
 	tTotalHits = 0;
 }
 
+void Interpret::resetHistograms()
+{
+	resetTriggerErrorCounterArray();
+	resetErrorCounterArray();
+	resetTdcCounterArray();
+	resetServiceRecordCounterArray();
+}
+
 void Interpret::createMetaDataWordIndex(bool CreateMetaDataWordIndex)
 {
 	debug("createMetaDataWordIndex");
