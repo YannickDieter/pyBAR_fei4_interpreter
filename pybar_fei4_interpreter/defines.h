@@ -106,17 +106,17 @@ const size_t __MAXHITBUFFERSIZE=4000000;     //maximum buffer array size for the
 const unsigned int __N_ERROR_CODES=16;            //number of event error codes
 const unsigned int __NO_ERROR=0;                  //no error
 const unsigned int __HAS_SR=1;                    //the event has service records
-const unsigned int __NO_TRG_WORD=2;               //the event has no trigger word, is ok for not external triggering
-const unsigned int __NON_CONST_LVL1ID=4;          //LVL1ID changes in one event, is ok for self triggering
+const unsigned int __NO_TRG_WORD=2;               //the event has no trigger word, only for self-triggered data taking and injection
+const unsigned int __NON_CONST_LVL1ID=4;          //LVL1ID changes in one event, happens in self-triggered mode
 const unsigned int __EVENT_INCOMPLETE=8;          //BCID not increasing by 1, most likely BCID missing (incomplete data transmission)
 const unsigned int __UNKNOWN_WORD=16;             //event has unknown words
 const unsigned int __BCID_JUMP=32;                //BCID jumps, but either LVL1ID is constant or data is externally triggered with trigger word or TDC word
-const unsigned int __TRG_ERROR=64;                //a trigger error occured
+const unsigned int __TRG_ERROR=64;                //a trigger error occurred
 const unsigned int __TRUNC_EVENT=128;             //Event had to many hits (>__MAXHITBUFFERSIZE) or data headers and was truncated
 const unsigned int __TDC_WORD=256;             	  //Event has a TDC word
 const unsigned int __MANY_TDC_WORDS=512;          //Event has more than one valid TDC word (event has more than one TDC word in normal use mode or event has more than one valid TDC word in TRG delay mode)
 const unsigned int __TDC_OVERFLOW=1024;           //Event has TDC word indicating a TDC overflow (value overflow in normal use mode and +no in time TDC in TRG delay use mode)
-const unsigned int __NO_HIT=2048;           	  //Events without any hit, usefull for trigger number debugging
+const unsigned int __NO_HIT=2048;           	  //Events without any hit, useful for trigger number debugging
 const unsigned int __OTHER_WORD=4096;             //Events with words not related to the FEI4 readout
 
 //trigger error codes
