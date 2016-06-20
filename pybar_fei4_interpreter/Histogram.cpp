@@ -144,7 +144,7 @@ void Histogram::addHits(HitInfo*& rHitInfo, const unsigned int& rNhits)
 		unsigned int tParIndex = getParIndex(rHitInfo[i].event_number);
 //		std::cout<<i<<" tParIndex "<<tParIndex<<" rHitInfo[i].event_number "<<rHitInfo[i].event_number<<"\n";
 
-		if(tParIndex < 0 || tParIndex > getNparameters()-1){
+		if(tParIndex >= getNparameters()){
 			error("addHits: tParIndex "+IntToStr(tParIndex)+"\t> "+IntToStr(_NparameterValues));
 			throw std::out_of_range("Parameter index out of range.");
 		}
@@ -208,7 +208,7 @@ void Histogram::addClusterSeedHits(ClusterInfo*& rClusterInfo, const unsigned in
 
 		unsigned int tParIndex = getParIndex(rClusterInfo[i].event_number);
 
-		if(tParIndex < 0 || tParIndex > getNparameters()-1){
+		if(tParIndex >= getNparameters()){
 			error("addHits: tParIndex "+IntToStr(tParIndex)+"\t> "+IntToStr(_NparameterValues));
 			throw std::out_of_range("Parameter index out of range.");
 		}
