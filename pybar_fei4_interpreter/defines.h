@@ -14,126 +14,126 @@
 
 //structure to store the hits
 typedef struct HitInfo{
-  int64_t event_number;   //event number value (unsigned long long: 0 to 18,446,744,073,709,551,615)
-  unsigned int trigger_number; //external trigger number for read out system
-  unsigned char relative_BCID; //relative BCID value (unsigned char: 0 to 255)
-  unsigned short int LVL1ID;   //LVL1ID (unsigned short int: 0 to 65.535)
-  unsigned char column;       //column value (unsigned char: 0 to 255)
-  unsigned short int row;     //row value (unsigned short int: 0 to 65.535)
-  unsigned char tot;          //tot value (unsigned char: 0 to 255)
-  unsigned short int BCID;    //absolute BCID value (unsigned short int: 0 to 65.535)
-  unsigned short int TDC; 	  //the TDC count (12-bit value)
-  unsigned char TDC_time_stamp; //a TDC time stamp value (8-bit value), either trigger distance (640 MHz) or time stamp (40 MHz)
-  unsigned char trigger_status;//event service records
-  unsigned int service_record; //event service records
-  unsigned short int event_status;  //event status value (unsigned short int: 0 to 65.535)
+	int64_t event_number;			//event number value (unsigned long long: 0 to 18,446,744,073,709,551,615)
+	unsigned int trigger_number;	//external trigger number for read out system
+	unsigned char relative_BCID;	//relative BCID value (unsigned char: 0 to 255)
+	unsigned short int LVL1ID;		//LVL1ID (unsigned short int: 0 to 65.535)
+	unsigned char column;			//column value (unsigned char: 0 to 255)
+	unsigned short int row;			//row value (unsigned short int: 0 to 65.535)
+	unsigned char tot;				//tot value (unsigned char: 0 to 255)
+	unsigned short int BCID;		//absolute BCID value (unsigned short int: 0 to 65.535)
+	unsigned short int TDC;			//the TDC count (12-bit value)
+	unsigned char TDC_time_stamp;	//a TDC time stamp value (8-bit value), either trigger distance (640 MHz) or time stamp (40 MHz)
+	unsigned char trigger_status;	//event service records
+	unsigned int service_record;	//event service records
+	unsigned short int event_status;//event status value (unsigned short int: 0 to 65.535)
 } HitInfo;
 
 //structure to store the hits with cluster info
 typedef struct ClusterHitInfo{
-  int64_t event_number;   //event number value (unsigned long long: 0 to 18,446,744,073,709,551,615)
-  unsigned int trigger_number; //external trigger number for read out system
-  unsigned char relative_BCID; //relative BCID value (unsigned char: 0 to 255)
-  unsigned short int LVL1ID;   //LVL1ID (unsigned short int: 0 to 65.535)
-  unsigned char column;       //column value (unsigned char: 0 to 255)
-  unsigned short int row;     //row value (unsigned short int: 0 to 65.535)
-  unsigned char tot;          //tot value (unsigned char: 0 to 255)
-  unsigned short int BCID;    //absolute BCID value (unsigned short int: 0 to 65.535)
-  unsigned short int TDC; 	  //the TDC count (12-bit value)
-  unsigned char TDC_time_stamp; //a TDC time stamp value (8-bit value), either trigger distance (640 MHz) or time stamp (40 MHz)
-  unsigned char trigger_status;//event service records
-  unsigned int service_record; //event service records
-  unsigned short int event_status;  //event status value (unsigned short int: 0 to 65.535)
-  unsigned short cluster_id;	  //the cluster id of the hit
-  unsigned char is_seed;	  	  //flag to mark seed pixel
-  unsigned short cluster_size; //the cluster size of the cluster belonging to the hit
-  unsigned short n_cluster;	  //the number of cluster in the event
+	int64_t event_number;			//event number value (unsigned long long: 0 to 18,446,744,073,709,551,615)
+	unsigned int trigger_number;	//external trigger number for read out system
+	unsigned char relative_BCID;	//relative BCID value (unsigned char: 0 to 255)
+	unsigned short int LVL1ID;		//LVL1ID (unsigned short int: 0 to 65.535)
+	unsigned char column;			//column value (unsigned char: 0 to 255)
+	unsigned short int row;			//row value (unsigned short int: 0 to 65.535)
+	unsigned char tot;				//tot value (unsigned char: 0 to 255)
+	unsigned short int BCID;		//absolute BCID value (unsigned short int: 0 to 65.535)
+	unsigned short int TDC;			//the TDC count (12-bit value)
+	unsigned char TDC_time_stamp;	//a TDC time stamp value (8-bit value), either trigger distance (640 MHz) or time stamp (40 MHz)
+	unsigned char trigger_status;	//event service records
+	unsigned int service_record;	//event service records
+	unsigned short int event_status;//event status value (unsigned short int: 0 to 65.535)
+	unsigned short cluster_id;		//the cluster id of the hit
+	unsigned char is_seed;			//flag to mark seed pixel
+	unsigned short cluster_size;	//the cluster size of the cluster belonging to the hit
+	unsigned short n_cluster;		//the number of cluster in the event
 } ClusterHitInfo;
 
 //structure to store the cluster
 typedef struct ClusterInfo{
-  int64_t event_number;  	  //event number value (unsigned long long: 0 to 18,446,744,073,709,551,615)
-  unsigned short ID;	  	  //the cluster id of the cluster
-  unsigned short size; 		  //sum tot of all cluster hits
-  unsigned short tot; 		  //sum tot of all cluster hits
-  unsigned char seed_column;  //seed pixel column value (unsigned char: 0 to 255)
-  unsigned short int seed_row;//seed pixel row value (unsigned short int: 0 to 65.535)
-  float mean_column;		  //column value (unsigned short int: 0 to 65.535)
-  float mean_row;			  //row value (unsigned short int: 0 to 65.535)
-  unsigned short int event_status;  //event status value (unsigned char: 0 to 255)
+	int64_t event_number;			//event number value (unsigned long long: 0 to 18,446,744,073,709,551,615)
+	unsigned short ID;				//the cluster id of the cluster
+	unsigned short size;			//sum tot of all cluster hits
+	unsigned short tot;				//sum tot of all cluster hits
+	unsigned char seed_column;		//seed pixel column value (unsigned char: 0 to 255)
+	unsigned short int seed_row;	//seed pixel row value (unsigned short int: 0 to 65.535)
+	float mean_column;				//column value (unsigned short int: 0 to 65.535)
+	float mean_row;					//row value (unsigned short int: 0 to 65.535)
+	unsigned short int event_status;//event status value (unsigned char: 0 to 255)
 } ClusterInfo;
 
 //structure for the input meta data
 typedef struct MetaInfo{
-  unsigned int startIndex;    //start index for this read out
-  unsigned int stopIndex;     //stop index for this read out (exclusive!)
-  unsigned int length;        //number of data word in this read out
-  double timeStamp;           //time stamp of the readout
-  unsigned int errorCode;     //error code for the read out (0: no error)
+	unsigned int startIndex;    //start index for this read out
+	unsigned int stopIndex;     //stop index for this read out (exclusive!)
+	unsigned int length;        //number of data word in this read out
+	double timeStamp;           //time stamp of the readout
+	unsigned int errorCode;     //error code for the read out (0: no error)
 } MetaInfo;
 
 //structure for the input meta data V2
 typedef struct MetaInfoV2{
-  unsigned int startIndex;    //start index for this read out
-  unsigned int stopIndex;     //stop index for this read out (exclusive!)
-  unsigned int length;        //number of data word in this read out
-  double startTimeStamp;      //start time stamp of the readout
-  double stopTimeStamp;       //stop time stamp of the readout
-  unsigned int errorCode;     //error code for the read out (0: no error)
+	unsigned int startIndex;    //start index for this read out
+	unsigned int stopIndex;     //stop index for this read out (exclusive!)
+	unsigned int length;        //number of data word in this read out
+	double startTimeStamp;      //start time stamp of the readout
+	double stopTimeStamp;       //stop time stamp of the readout
+	unsigned int errorCode;     //error code for the read out (0: no error)
 } MetaInfoV2;
 
 //structures for the output meta data
 typedef struct MetaInfoOut{
-  int64_t eventIndex;    //event number of the read out
-  double timeStamp;           //time stamp of the readout
-  unsigned int errorCode;     //error code for the read out (0: no error)
+	int64_t eventIndex;			//event number of the read out
+	double timeStamp;			//time stamp of the readout
+	unsigned int errorCode;		//error code for the read out (0: no error)
 } MetaInfoOut;
 
 typedef struct MetaWordInfoOut{
-  int64_t eventIndex;   //event number
-  unsigned int startWordIdex;//start word index
-  unsigned int stopWordIdex; //stop word index
+	int64_t eventIndex;			//event number
+	unsigned int startWordIdex;	//start word index
+	unsigned int stopWordIdex;	//stop word index
 } MetaWordInfoOut;
 
 //DUT and TLU defines
-const unsigned int __BCIDCOUNTERSIZE_FEI4A=256;	  //BCID counter for FEI4A has 8 bit
-const unsigned int __BCIDCOUNTERSIZE_FEI4B=1024;  //BCID counter for FEI4B has 10 bit
-const unsigned int __NSERVICERECORDS=32;          //# of different service records
-const size_t __MAXARRAYSIZE=2000000;         //maximum buffer array size for the output hit array (has to be bigger than hits in one chunk)
-const size_t __MAXHITBUFFERSIZE=4000000;     //maximum buffer array size for the hit buffer array (has to be bigger than hits in one event)
+const unsigned int __BCIDCOUNTERSIZE_FEI4A=256;	//BCID counter for FEI4A has 8 bit
+const unsigned int __BCIDCOUNTERSIZE_FEI4B=1024;//BCID counter for FEI4B has 10 bit
+const unsigned int __NSERVICERECORDS=32;		//# of different service records
+const size_t __MAXARRAYSIZE=2000000;			//maximum buffer array size for the output hit array (has to be bigger than hits in one chunk)
+const size_t __MAXHITBUFFERSIZE=4000000;		//maximum buffer array size for the hit buffer array (has to be bigger than hits in one event)
 
 //event error codes
-const unsigned int __N_ERROR_CODES=16;            //number of event error codes
-const unsigned int __NO_ERROR=0;                  //no error
-const unsigned int __HAS_SR=1;                    //the event has service records
-const unsigned int __NO_TRG_WORD=2;               //the event has no trigger word, only for self-triggered data taking and injection
-const unsigned int __NON_CONST_LVL1ID=4;          //LVL1ID changes in one event, happens in self-triggered mode
-const unsigned int __EVENT_INCOMPLETE=8;          //BCID not increasing by 1, most likely BCID missing (incomplete data transmission)
-const unsigned int __UNKNOWN_WORD=16;             //event has unknown words
-const unsigned int __BCID_JUMP=32;                //BCID jumps, but either LVL1ID is constant or data is externally triggered with trigger word or TDC word
-const unsigned int __TRG_ERROR=64;                //a trigger error occurred
-const unsigned int __TRUNC_EVENT=128;             //Event had to many hits (>__MAXHITBUFFERSIZE) or data headers and was truncated
-const unsigned int __TDC_WORD=256;             	  //Event has a TDC word
-const unsigned int __MANY_TDC_WORDS=512;          //Event has more than one valid TDC word (event has more than one TDC word in normal use mode or event has more than one valid TDC word in TRG delay mode)
-const unsigned int __TDC_OVERFLOW=1024;           //Event has TDC word indicating a TDC overflow (value overflow in normal use mode and +no in time TDC in TRG delay use mode)
-const unsigned int __NO_HIT=2048;           	  //Events without any hit, useful for trigger number debugging
-const unsigned int __OTHER_WORD=4096;             //Events with words not related to the FEI4 readout
+const unsigned int __N_ERROR_CODES=16;			//number of event error codes
+const unsigned int __NO_ERROR=0;				//no error
+const unsigned int __HAS_SR=1;					//the event has service records
+const unsigned int __NO_TRG_WORD=2;				//the event has no trigger word, only for self-triggered data taking and injection
+const unsigned int __NON_CONST_LVL1ID=4;		//LVL1ID changes in one event, happens in self-triggered mode
+const unsigned int __EVENT_INCOMPLETE=8;		//BCID not increasing by 1, most likely BCID missing (incomplete data transmission)
+const unsigned int __UNKNOWN_WORD=16;			//event has unknown words
+const unsigned int __BCID_JUMP=32;				//BCID jumps, but either LVL1ID is constant or data is externally triggered with trigger word or TDC word
+const unsigned int __TRG_ERROR=64;				//a trigger error occurred
+const unsigned int __TRUNC_EVENT=128;			//Event had to many hits (>__MAXHITBUFFERSIZE) or data headers and was truncated
+const unsigned int __TDC_WORD=256;				//Event has a TDC word
+const unsigned int __MANY_TDC_WORDS=512;		//Event has more than one valid TDC word (event has more than one TDC word in normal use mode or event has more than one valid TDC word in TRG delay mode)
+const unsigned int __TDC_OVERFLOW=1024;			//Event has TDC word indicating a TDC overflow (value overflow in normal use mode and +no in time TDC in TRG delay use mode)
+const unsigned int __NO_HIT=2048;				//Events without any hit, useful for trigger number debugging
+const unsigned int __OTHER_WORD=4096;			//Events with words not related to the FEI4 readout
 
 //trigger error codes
-const unsigned int __TRG_N_ERROR_CODES=8;         //number of trigger error codes
-const unsigned int __TRG_NO_ERROR=0;              //no trigger error
-const unsigned int __TRG_NUMBER_INC_ERROR=1;      //two consecutive triggern numbers are not increasing by exactly one (counter overflow case considered correctly)
-const unsigned int __TRG_NUMBER_MORE_ONE=2;       //more than one trigger per event
-const unsigned int __TRG_ERROR_TRG_ACCEPT=4;      //TLU error
-const unsigned int __TRG_ERROR_LOW_TIMEOUT=8;     //TLU error
+const unsigned int __TRG_N_ERROR_CODES=8;		//number of trigger error codes
+const unsigned int __TRG_NO_ERROR=0;			//no trigger error
+const unsigned int __TRG_NUMBER_INC_ERROR=1;	//two consecutive triggern numbers are not increasing by exactly one (counter overflow case considered correctly)
+const unsigned int __TRG_NUMBER_MORE_ONE=2;		//more than one trigger per event
+const unsigned int __TRG_ERROR_TRG_ACCEPT=4;	//TLU error
+const unsigned int __TRG_ERROR_LOW_TIMEOUT=8;	//TLU error
 
 //Clusterizer definitions
-const unsigned int __MAXBCID=256;			//maximum possible BCID window width, 16 for the FE, 256 in FE stop mode
-const unsigned int __MAXTOTBINS=128;		//number of TOT bins for the cluster tot histogram (in TOT = [0:31])
-const unsigned int __MAXCHARGEBINS=4096;	//number of charge bins for the cluster charge histogram (in PlsrDAC)
+const unsigned int __MAXBCID=256;				//maximum possible BCID window width, 16 for the FE, 256 in FE stop mode
+const unsigned int __MAXTOTBINS=128;			//number of TOT bins for the cluster tot histogram (in TOT = [0:31])
+const unsigned int __MAXCHARGEBINS=4096;		//number of charge bins for the cluster charge histogram (in PlsrDAC)
 const unsigned int __MAXCLUSTERHITSBINS=1024;	//number of for the cluster size (=# hits) histogram
-const unsigned int __MAXPOSXBINS=1000;		//number of bins in x for the 2d hit position histogram
-const unsigned int __MAXPOSYBINS=1000;		//number of bins in y for the 2d hit position histogram
+const unsigned int __MAXPOSXBINS=1000;			//number of bins in x for the 2d hit position histogram
+const unsigned int __MAXPOSYBINS=1000;			//number of bins in y for the 2d hit position histogram
 
 const unsigned int __MAXTOTLOOKUP=14;
 
@@ -251,5 +251,5 @@ const unsigned int RAW_DATA_MAX_ROW=336;
 #define SERVICE_RECORD_ETC_MACRO_FEI4B(X)	((SERVICE_RECORD_ETC_MASK_FEI4B & X) >> 4)
 #define SERVICE_RECORD_L1REQ_MACRO_FEI4B(X)	(SERVICE_RECORD_L1REQ_MASK_FEI4B & X)
 
-#pragma pack(pop)  // pop needed to suppress VS C4103 compiler warning
+#pragma pack(pop) // pop needed to suppress VS C4103 compiler warning
 #endif // DEFINES_H

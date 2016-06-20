@@ -168,7 +168,7 @@ private:
 	unsigned int _lastTriggerNumber;            //trigger number of last event
 	unsigned int _startWordIndex;				//the absolute word index of the first word of the actual event
 	unsigned short tTdcCount;					//the TDC count value of the actual event, if no TDC word occured this value is zero
-	unsigned char tTdcTimeStamp;				//the TDC count value of the actual event, if no TDC word occured this value is zero
+	unsigned char tTdcTimeStamp;				//the TDC timestamp of the actual event, if no TDC word occured this value is zero
 
 	//counters/flags for the total raw data processing
 	unsigned int _nTriggers;					//total number of trigger words found
