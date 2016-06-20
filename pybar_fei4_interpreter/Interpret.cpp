@@ -425,7 +425,6 @@ void Interpret::resetEventVariables()
 	tErrorCode = 0;
 	tServiceRecord = 0;
 	tBCIDerror = false;
-//	tLVL1IDisConst = true;
 	tTriggerWord = 0;
 	tTdcCount = 0;
 	tTdcTimeStamp = 0;
@@ -620,7 +619,6 @@ void Interpret::printStatus()
 	std::cout << "tServiceRecord " << tServiceRecord << "\n";
 	std::cout << "tTriggerNumber " << tTriggerNumber << "\n";
 	std::cout << "tTotalHits " << tTotalHits << "\n";
-//	std::cout << "tLVL1IDisConst "<<tLVL1IDisConst<<"\n";
 	std::cout << "tBCIDerror " << tBCIDerror << "\n";
 	std::cout << "tTriggerWord " << tTriggerWord << "\n";
 	std::cout << "tTdcCount " << tTdcCount << "\n";

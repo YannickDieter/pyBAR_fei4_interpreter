@@ -162,8 +162,7 @@ private:
 	unsigned int tServiceRecord;				//event service records
 	unsigned int tEventTriggerNumber;           //event trigger number
 	unsigned int tTotalHits;                    //event hits
-	bool tLVL1IDisConst;					    //is only true if a trigger is send externally, self trigger can have different LVL1IDs in one event
-	bool tBCIDerror;						    //set to true if event data is incomplete to omit the actual event for clustering
+	bool tBCIDerror;						 	//set to true if event data is incomplete to omit the actual event for clustering
 	unsigned int tTriggerWord;				    //count the trigger words per event
 	unsigned int _lastTriggerNumber;            //trigger number of last event
 	unsigned int _startWordIndex;				//the absolute word index of the first word of the actual event
