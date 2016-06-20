@@ -969,75 +969,81 @@ void Interpret::addTriggerErrorCode(const unsigned char& pErrorCode)
 
 void Interpret::addEventErrorCode(const unsigned short& pErrorCode)
 {
-	if ((tErrorCode & pErrorCode) != pErrorCode) {  //only add event error code if its not already set
+	if ((tErrorCode & pErrorCode) != pErrorCode) { // only add event error code if it hasn't been set
 		if (Basis::debugSet()) {
 			std::stringstream tDebug;
 			tDebug << "addEventErrorCode: " << (unsigned int) pErrorCode << " ";
-			switch ((unsigned int) pErrorCode) {
-			case __NO_ERROR:
-			{
-				tDebug << "NO ERROR";
-				break;
-			}
-			case __HAS_SR:
-			{
-				tDebug << "EVENT HAS SERVICE RECORD";
-				break;
-			}
-			case __NO_TRG_WORD:
-			{
-				tDebug << "EVENT HAS NO TRIGGER NUMBER";
-				break;
-			}
-			case __NON_CONST_LVL1ID:
-			{
-				tDebug << "EVENT HAS NON CONST LVL1ID";
-				break;
-			}
-			case __EVENT_INCOMPLETE:
-			{
-				tDebug << "EVENT HAS TOO LESS DATA HEADER";
-				break;
-			}
-			case __UNKNOWN_WORD:
-			{
-				tDebug << "EVENT HAS UNKNOWN WORDS";
-				break;
-			}
-			case __BCID_JUMP:
-			{
-				tDebug << "EVENT HAS JUMPING BCID NUMBERS";
-				break;
-			}
-			case __TRG_ERROR:
-			{
-				tDebug << "EVENT HAS AN EXTERNAL TRIGGER ERROR";
-				break;
-			}
-			case __TRUNC_EVENT:
-			{
-				tDebug << "EVENT HAS TOO MANY DATA HEADERS/RECORDS AND WAS TRUNCATED";
-				break;
-			}
-			case __TDC_WORD:
-			{
-				tDebug << "EVENT HAS TDC WORD";
-				break;
-			}
-			case __MANY_TDC_WORDS:
-			{
-				tDebug << "EVENT HAS MORE THAN ONE VALID TDC WORD";
-				break;
-			}
-			case __TDC_OVERFLOW:
-			{
-				tDebug << "EVENT HAS TDC OVERFLOW";
-				break;
-			}
-			}
+			printErrorCode(pErrorCode);
 			debug(tDebug.str() + "\t" + LongIntToStr(_nEvents));
 		}
 		tErrorCode |= pErrorCode;
+	}
+}
+
+void Interpret::printErrorCode(const unsigned short& pErrorCode)
+{
+	std::stringstream tDebug;
+	switch ((unsigned int) pErrorCode) {
+		case __NO_ERROR:
+		{
+			tDebug << "NO ERROR";
+			break;
+		}
+		case __HAS_SR:
+		{
+			tDebug << "EVENT HAS SERVICE RECORD";
+			break;
+		}
+		case __NO_TRG_WORD:
+		{
+			tDebug << "EVENT HAS NO TRIGGER NUMBER";
+			break;
+		}
+		case __NON_CONST_LVL1ID:
+		{
+			tDebug << "EVENT HAS NON CONST LVL1ID";
+			break;
+		}
+		case __EVENT_INCOMPLETE:
+		{
+			tDebug << "EVENT HAS TOO LESS DATA HEADER";
+			break;
+		}
+		case __UNKNOWN_WORD:
+		{
+			tDebug << "EVENT HAS UNKNOWN WORDS";
+			break;
+		}
+		case __BCID_JUMP:
+		{
+			tDebug << "EVENT HAS JUMPING BCID NUMBERS";
+			break;
+		}
+		case __TRG_ERROR:
+		{
+			tDebug << "EVENT HAS AN EXTERNAL TRIGGER ERROR";
+			break;
+		}
+		case __TRUNC_EVENT:
+		{
+			tDebug << "EVENT HAS TOO MANY DATA HEADERS/RECORDS AND WAS TRUNCATED";
+			break;
+		}
+		case __TDC_WORD:
+		{
+			tDebug << "EVENT HAS TDC WORD";
+			break;
+		}
+		case __MANY_TDC_WORDS:
+		{
+			tDebug << "EVENT HAS MORE THAN ONE VALID TDC WORD";
+			break;
+		}
+		case __TDC_OVERFLOW:
+		{
+			tDebug << "EVENT HAS TDC OVERFLOW";
+			break;
+		}
 	}
 }
 

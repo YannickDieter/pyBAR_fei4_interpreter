@@ -126,6 +126,7 @@ private:
 
 	//helper function for debuging data words
 	void printInterpretedWords(unsigned int* pDataWords, const unsigned int& rNsramWords, const unsigned int& rStartWordIndex, const unsigned int& rEndWordIndex);
+	void printErrorCode(const unsigned short& pErrorCode);
 
 	//array variables for interpreted information
 	unsigned int _hitInfoSize;				  //size of the _hitInfo array
