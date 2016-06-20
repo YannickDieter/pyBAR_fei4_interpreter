@@ -34,7 +34,7 @@ void Interpret::setStandardSettings()
 	_stopDebugEvent = 0;
 	_NbCID = 16;
 	_maxTot = 13;
-	_fEI4B = false;
+	_fEI4B = true;
 	_metaDataSet = false;
 	_debugEvents = false;
 	_lastMetaIndexNotSet = 0;
