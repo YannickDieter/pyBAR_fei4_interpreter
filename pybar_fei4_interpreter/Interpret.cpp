@@ -47,7 +47,7 @@ void Interpret::setStandardSettings()
 	_isMetaTableV2 = true;
 	_alignAtTriggerNumber = false;
 	_useTriggerTimeStamp = false;
-	_useTdcTriggerTimeStamp = false;
+	_useTdcTriggerDistance = false;
 	_maxTdcDelay = 255;
 	_alignAtTdcWord = false;
 	_dataWordIndex = 0;
@@ -97,23 +97,23 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					addEvent();
 				}
 			}
-			if (tNdataHeader == 0) {								        //set the BCID of the first data header
+			if (tNdataHeader == 0) { // set the BCID of the first data header
 				tStartBCID = tActualBCID;
 				tStartLVL1ID = tActualLVL1ID;
 			}
 			else {
-				tDbCID++;										        //increase relative BCID counter [0:15]
+				tDbCID++; // increase relative BCID counter [0:15]
 				if (_fEI4B) {
-					if (tStartBCID + tDbCID > __BCIDCOUNTERSIZE_FEI4B - 1)	//BCID counter overflow for FEI4B (10 bit BCID counter)
+					if (tStartBCID + tDbCID > __BCIDCOUNTERSIZE_FEI4B - 1) // BCID counter overflow for FEI4B (10 bit BCID counter)
 						tStartBCID = tStartBCID - __BCIDCOUNTERSIZE_FEI4B;
 				}
 				else {
-					if (tStartBCID + tDbCID > __BCIDCOUNTERSIZE_FEI4A - 1)	//BCID counter overflow for FEI4A (8 bit BCID counter)
+					if (tStartBCID + tDbCID > __BCIDCOUNTERSIZE_FEI4A - 1) // BCID counter overflow for FEI4A (8 bit BCID counter)
 						tStartBCID = tStartBCID - __BCIDCOUNTERSIZE_FEI4A;
 				}
 
-				if (tStartBCID + tDbCID != tActualBCID) {  //check if BCID is increasing by 1s in the event window, if not close actual event and create new event with actual data header
-					if (tActualLVL1ID == tStartLVL1ID) { //happens sometimes, non inc. BCID, FE feature, only abort if the LVL1ID is not constant (if no external trigger is used or)
+				if (tStartBCID + tDbCID != tActualBCID) { // check if BCID is increasing by 1s in the event window, if not close actual event and create new event with actual data header
+					if (tActualLVL1ID == tStartLVL1ID) { // happens sometimes, non inc. BCID, FE feature, only abort if the LVL1ID is not constant (if no external trigger is used or)
 						addEventErrorCode(__BCID_JUMP);
 						if (Basis::infoSet())
 							info("interpretRawData: BCID jumping: " + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents));
@@ -122,28 +122,28 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 						if (Basis::infoSet())
 							info("interpretRawData: BCID jumping: " + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents));
 					} else {
-						tBCIDerror = true;					       //BCID number wrong, abort event and take actual data header for the first hit of the new event
+						tBCIDerror = true; // BCID number wrong, abort event and take actual data header for the first hit of the new event
 						addEventErrorCode(__EVENT_INCOMPLETE);
 					}
 				}
-				if (!tBCIDerror && tActualLVL1ID != tStartLVL1ID) {    //LVL1ID not constant, is expected for CMOS pulse trigger/hit OR, but not for trigger word triggering
+				if (!tBCIDerror && tActualLVL1ID != tStartLVL1ID) { // LVL1ID not constant, is expected for CMOS pulse trigger/hit OR, but not for trigger word triggering
 					addEventErrorCode(__NON_CONST_LVL1ID);
 					if (Basis::infoSet())
 						info("interpretRawData: LVL1 is not constant: " + IntToStr(tActualLVL1ID) + "!=" + IntToStr(tStartLVL1ID) + " at event " + LongIntToStr(_nEvents));
 				}
 			}
-			tNdataHeader++;										       //increase data header counter
+			tNdataHeader++; // increase data header counter
 			if (Basis::debugSet())
 				debug(std::string(" ") + IntToStr(_nDataWords) + " DH LVL1ID/BCID " + IntToStr(tActualLVL1ID) + "/" + IntToStr(tActualBCID) + "\t" + LongIntToStr(_nEvents));
 		}
-		else if (isTriggerWord(tActualWord)) { //data word is trigger word, is first word of the event data if external trigger is present
-			_nTriggers++;						//increase the total trigger number counter
-			if (!_alignAtTriggerNumber) {			// first word is not always the trigger number
+		else if (isTriggerWord(tActualWord)) { // data word is trigger word, is first word of the event data if external trigger is present
+			_nTriggers++; // increase the total trigger number counter
+			if (!_alignAtTriggerNumber) { // first word is not always the trigger number
 				if (tNdataHeader > _NbCID - 1)
 					addEvent();
 			}
-			else {		// use trigger number for event building, first word is trigger word in event data stream
-				if (_firstTriggerNrSet) { // do not build new event after first trigger
+			else { // use trigger number for event building, first word is trigger word in event data stream
+				if (_firstTriggerNrSet) { // take care of the very first trigger of the raw data
 					addEvent();
 				}
 				else if (tNdataHeader > _NbCID - 1) { // for old data where trigger word (first raw data word) might be missing
@@ -152,12 +152,12 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 				}
 
 			}
-			tTriggerWord++;                     //trigger event counter increase
+			tTriggerWord++; // trigger event counter increase
 
 			if (!_useTriggerTimeStamp)
-				tTriggerNumber = TRIGGER_NUMBER_MACRO_NEW(tActualWord); //actual trigger number
+				tTriggerNumber = TRIGGER_NUMBER_MACRO_NEW(tActualWord); // actual trigger number
 			else
-				tTriggerNumber = TRIGGER_TIME_STAMP_MACRO(tActualWord); //actual trigger number is a time stamp
+				tTriggerNumber = TRIGGER_TIME_STAMP_MACRO(tActualWord); // actual trigger number is a time stamp
 
 			if (Basis::debugSet()) {
 				if (!_useTriggerTimeStamp)
@@ -188,48 +188,74 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			_nServiceRecords++;
 		}
 		else if (isTdcWord(tActualWord)) {	//data word is a tdc word
-			addTdcValue(TDC_COUNT_MACRO(tActualWord));
+			addTdcValue(TDC_VALUE_MACRO(tActualWord));
 			_nTDCWords++;
-			if (_useTdcTriggerTimeStamp && (TDC_TRIG_DIST_MACRO(tActualWord) > _maxTdcDelay)){  // of the trigger distance if > _maxTdcDelay the TDC word does not belong to this event, thus ignore it
+			if (_useTdcTriggerDistance && (TDC_TRIG_DIST_MACRO(tActualWord) > _maxTdcDelay)){  // if TDC trigger to TDC signal distance > _maxTdcDelay the TDC word is ingored
 				if (Basis::debugSet())
-					debug(std::string(" ") + IntToStr(_nDataWords) + " TDC COUNT " + IntToStr(TDC_COUNT_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TRG DIST TIME STAMP " + IntToStr(TDC_TRIG_DIST_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
+					debug(std::string(" ") + IntToStr(_nDataWords) + "IGNORING TDC WORD - EXCEEDING _maxTdcDelay - TDC VALUE" + IntToStr(TDC_VALUE_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TDC DISTANCE " + IntToStr(TDC_TRIG_DIST_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
 				continue;
 			}
 
 			//create new event if the option to align at TDC words is active AND the previous event has seen already all needed data headers OR the previous event was not aligned at a TDC word
-			if (_alignAtTdcWord && _firstTdcSet && ( (tNdataHeader > _NbCID - 1) || ((tErrorCode & __TDC_WORD) != __TDC_WORD) )) {
+			if (_alignAtTdcWord && _firstTdcSet && ((tNdataHeader >= _NbCID) || ((tErrorCode & __TDC_WORD) != __TDC_WORD))) {
 				addEvent();
 			}
 
 			_firstTdcSet = true;
 
-			if ((tErrorCode & __TDC_WORD) == __TDC_WORD) {  //if the event has already a TDC word set __MANY_TDC_WORDS
-				if (!_useTdcTriggerTimeStamp)  // the first TDC word defines the event TDC value
-					addEventErrorCode(__MANY_TDC_WORDS);
-				else if (TDC_TRIG_DIST_MACRO(tActualWord) != 255) {  // in trigger time measurement mode the valid TDC word (tTdcTimeStamp != 255) defines the event TDC value
-					if (tTdcTimeStamp != 255)  // there is already a valid TDC word for this event
+			// Special case when _alignAtTriggerNumber AND _useTdcTriggerDistance is true:
+			// Expecting TDC word after the trigger AND before the first data header.
+			// Multiple TDC words after the trigger AND before the first data header will result in __MANY_TDC_WORDS.
+			// Any TDC word that comes after the first data header will be ignored and will NOT result in __MANY_TDC_WORDS or __TDC_OVERFLOW.
+			// See also addEvent().
+			if (_alignAtTriggerNumber && _useTdcTriggerDistance) {
+				if (tNdataHeader == 0) {
+					if ((tErrorCode & __TDC_WORD) == __TDC_WORD) { // if the event has already a TDC word
+						// the first TDC word defines the event TDC value, keep the old values and set the error code
 						addEventErrorCode(__MANY_TDC_WORDS);
+					}
 					else {
+						addEventErrorCode(__TDC_WORD);
+						tTdcCount = TDC_VALUE_MACRO(tActualWord);
 						tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord);
-						tTdcCount = TDC_COUNT_MACRO(tActualWord);
+					}
+				}
+				// ignore all other TDC words that are after the first data header
+			}
+			else {
+				if ((tErrorCode & __TDC_WORD) == __TDC_WORD) { // if the event has already a TDC word
+					// The first TDC word of an event should be a valid TDC word.
+					// Only set event error code if a valid TCD word appear after the first TDC word of an event.
+					if (_useTdcTriggerDistance) {
+						if (TDC_TRIG_DIST_MACRO(tActualWord) < 255 && TDC_VALUE_MACRO(tActualWord) > 0) { // when using TDC distance a valid TDC word has a TDC distance < 255 and TDC value > 0
+							addEventErrorCode(__MANY_TDC_WORDS); // set event error code becaue a valid TDC word is not the first TDC word of an event
+							if (tTdcTimeStamp == 255 || tTdcCount == 0) { // the first valid TDC word of an event defines the event TDC value and TDC distance
+								tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord);
+								tTdcCount = TDC_VALUE_MACRO(tActualWord);
+							}
+						}
+						// ignore all other invalid TDC words with TDC distance == 255 or TDC value == 0, do not set event error
+					}
+					else {
+						addEventErrorCode(__MANY_TDC_WORDS);
+					}
+				}
+				else {
+					addEventErrorCode(__TDC_WORD);
+					tTdcCount = TDC_VALUE_MACRO(tActualWord);
+					if (_useTdcTriggerDistance) {
+						tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord); // TODO: use TDC_TIME_STAMP_SHORT_MACRO, add tTdcDistance variable
+					}
+					else {
+						tTdcTimeStamp = TDC_TIME_STAMP_MACRO(tActualWord);
 					}
 				}
 			}
-			else {
-				addEventErrorCode(__TDC_WORD);
-				tTdcCount = TDC_COUNT_MACRO(tActualWord);
-				if (!_useTdcTriggerTimeStamp)
-					tTdcTimeStamp = TDC_TIME_STAMP_MACRO(tActualWord);
-				else
-					tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord);
-			}
-			if (tTdcCount == 0)
-				addEventErrorCode(__TDC_OVERFLOW);
 			if (Basis::debugSet()) {
-				if (_useTdcTriggerTimeStamp)
-					debug(std::string(" ") + IntToStr(_nDataWords) + " TDC COUNT " + IntToStr(TDC_COUNT_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TRG DIST TIME STAMP " + IntToStr(TDC_TRIG_DIST_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
+				if (_useTdcTriggerDistance)
+					debug(std::string(" ") + IntToStr(_nDataWords) + " TDC VALUE " + IntToStr(TDC_VALUE_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TDC DISTANCE " + IntToStr(TDC_TRIG_DIST_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
 				else
-					debug(std::string(" ") + IntToStr(_nDataWords) + " TDC COUNT " + IntToStr(TDC_COUNT_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TIME STAMP " + IntToStr(TDC_TIME_STAMP_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
+					debug(std::string(" ") + IntToStr(_nDataWords) + " TDC VALUE " + IntToStr(TDC_VALUE_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TDC TIMESTAMP/COUNTER " + IntToStr(TDC_TIME_STAMP_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
 			}
 		}
 		else if (isDataRecord(tActualWord)) {	//data word is data record if true is returned
@@ -497,7 +523,7 @@ void Interpret::useTriggerTimeStamp(bool useTriggerTimeStamp)
 void Interpret::useTdcTriggerTimeStamp(bool useTdcTriggerTimeStamp)
 {
 	info("useTdcTriggerTimeStamp()");
-	_useTdcTriggerTimeStamp = useTdcTriggerTimeStamp;
+	_useTdcTriggerDistance = useTdcTriggerTimeStamp;
 }
 
 void Interpret::getServiceRecordsCounters(unsigned int*& rServiceRecordsCounter, unsigned int& rNserviceRecords, bool copy)
@@ -604,7 +630,7 @@ void Interpret::printStatus()
 	std::cout << "_alignAtTriggerNumber " << _alignAtTriggerNumber << "\n";
 	std::cout << "_alignAtTdcWord " << _alignAtTdcWord << "\n";
 	std::cout << "_useTriggerTimeStamp " << _useTriggerTimeStamp << "\n";
-	std::cout << "_useTdcTriggerTimeStamp " << _useTdcTriggerTimeStamp << "\n";
+	std::cout << "_useTdcTriggerDistance " << _useTdcTriggerDistance << "\n";
 	std::cout << "_maxTdcDelay " << _maxTdcDelay << "\n";
 
 	std::cout << "\none event variables\n";
@@ -764,7 +790,9 @@ void Interpret::addEvent()
 		if (Basis::warningSet())
 			warning(std::string("addEvent: # trigger words > 1 at event " + LongIntToStr(_nEvents)));
 	}
-	if (_useTdcTriggerTimeStamp && tTdcTimeStamp >= 254)
+	if ((_useTdcTriggerDistance && tTdcTimeStamp >= 255) || tTdcCount == 0)
+		addEventErrorCode(__MANY_TDC_WORDS);
+	if (tTdcCount >= 4095)
 		addEventErrorCode(__TDC_OVERFLOW);
 
 	storeEventHits();

@@ -147,7 +147,7 @@ private:
 	unsigned int _stopDebugEvent;               //stop event number to have debug output
 	bool _alignAtTriggerNumber;						//set to true to force event recognision by trigger number
 	bool _alignAtTdcWord;							//set to true to force event recognision by tdc word if event before is complete
-	bool _useTdcTriggerTimeStamp;				//set to true to use the TDC trigger distance to fill the TDC time stamp otherwise use counter
+	bool _useTdcTriggerDistance;				//set to true to use the TDC trigger distance to fill the TDC time stamp, otherwise use counter
 	bool _useTriggerTimeStamp;					//set to true to use the trigger value as a clock count
 	unsigned int _maxTriggerNumber;				//maximum trigger trigger number
 

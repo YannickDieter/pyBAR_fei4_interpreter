@@ -156,12 +156,14 @@ const unsigned int RAW_DATA_MAX_ROW=336;
 #define __N_TDC_PIXEL_VALUES 2048
 #define TDC_HEADER 0x40000000 // 0100 xxxx xxxx xxxx xxxx xxxx xxxx xxxx, x may contain user data
 #define TDC_HEADER_MASK 0xF0000000 // select TDC header, no one-hot header
-#define TDC_COUNT_MASK 0x00000FFF
-#define TDC_TIME_STAMP_MASK 0x0FFFF000  // time stamp (running counter) to compare e.g. with trigger time stamp or TDC word counter, 16 bit, 8 bit if the TDC distribution macro is activated
-#define TDC_TRIG_DIST_MASK 0x0FF00000  // delay between trigger and TDC leading edge
+#define TDC_VALUE_MASK 0x00000FFF
+#define TDC_TIME_STAMP_MASK 0x0FFFF000  // 16 bit time stamp (running counter)/TDC occurrence counter, TDC distance is disabled
+#define TDC_TIME_STAMP_SHORT_MASK 0x000FF000  // 8 bit time stamp (running counter)/TDC occurrence counter, TDC distance is enabled
+#define TDC_TRIG_DIST_MASK 0x0FF00000  // delay between TDC trigger and the TDC signal
 #define TDC_WORD_MACRO(X) (((TDC_HEADER_MASK & X) == TDC_HEADER) ? true : false)
-#define TDC_COUNT_MACRO(X) (TDC_COUNT_MASK & X)
+#define TDC_VALUE_MACRO(X) (TDC_VALUE_MASK & X)
 #define TDC_TIME_STAMP_MACRO(X) ((TDC_TIME_STAMP_MASK & X) >> 12)
+#define TDC_TIME_STAMP_SHORT_MACRO(X) ((TDC_TIME_STAMP_SHORT_MASK & X) >> 12)
 #define TDC_TRIG_DIST_MACRO(X) ((TDC_TRIG_DIST_MASK & X) >> 20)
 
 // Other word macros (for data not directly related to FEI4, another module writing to SRAM with one-hot header)
