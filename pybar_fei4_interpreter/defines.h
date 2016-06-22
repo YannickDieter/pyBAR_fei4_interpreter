@@ -22,7 +22,7 @@ typedef struct HitInfo{
 	unsigned short int row;			//row value (unsigned short int: 0 to 65.535)
 	unsigned char tot;				//tot value (unsigned char: 0 to 255)
 	unsigned short int BCID;		//absolute BCID value (unsigned short int: 0 to 65.535)
-	unsigned short int TDC;			//the TDC count (12-bit value)
+	unsigned short int TDC;			//the TDC value (12-bit value)
 	unsigned char TDC_time_stamp;	//a TDC time stamp value (8-bit value), either trigger distance (640 MHz) or time stamp (40 MHz)
 	unsigned char trigger_status;	//event service records
 	unsigned int service_record;	//event service records
@@ -39,7 +39,7 @@ typedef struct ClusterHitInfo{
 	unsigned short int row;			//row value (unsigned short int: 0 to 65.535)
 	unsigned char tot;				//tot value (unsigned char: 0 to 255)
 	unsigned short int BCID;		//absolute BCID value (unsigned short int: 0 to 65.535)
-	unsigned short int TDC;			//the TDC count (12-bit value)
+	unsigned short int TDC;			//the TDC value (12-bit value)
 	unsigned char TDC_time_stamp;	//a TDC time stamp value (8-bit value), either trigger distance (640 MHz) or time stamp (40 MHz)
 	unsigned char trigger_status;	//event service records
 	unsigned int service_record;	//event service records
@@ -154,6 +154,7 @@ const unsigned int RAW_DATA_MAX_ROW=336;
 //TDC macros
 #define __N_TDC_VALUES 4096
 #define __N_TDC_PIXEL_VALUES 2048
+#define __N_TDC_DIST_VALUES 256
 #define TDC_HEADER 0x40000000 // 0100 xxxx xxxx xxxx xxxx xxxx xxxx xxxx, x may contain user data
 #define TDC_HEADER_MASK 0xF0000000 // select TDC header, no one-hot header
 #define TDC_COUNT_MASK 0x00000FFF

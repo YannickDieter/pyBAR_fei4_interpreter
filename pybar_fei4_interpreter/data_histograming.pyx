@@ -31,7 +31,8 @@ cdef extern from "Histogram.h":
         void createRelBCIDHist(cpp_bool CreateRelBCIDHist)
         void createMeanTotHist(cpp_bool CreateMeanTotHist)
         void createTotHist(cpp_bool CreateTotHist)
-        void createTdcHist(cpp_bool CreateTdcPixelHist)
+        void createTdcHist(cpp_bool CreateTdcHist)
+        void createTdcTriggerDistanceHist(cpp_bool CreateTdcTriggerDistanceHist)
         void createTdcPixelHist(cpp_bool CreateTdcPixelHist)
         void createTotPixelHist(cpp_bool CreateTotPixelHist)
         void setMaxTot(const unsigned int& rMaxTot)
@@ -40,6 +41,7 @@ cdef extern from "Histogram.h":
         void getTotHist(unsigned int*& rTotHist, cpp_bool copy)  # returns the tot histogram for all hits
         void getMeanTot(unsigned int& rNparameterValues, float*& rOccupancy, cpp_bool copy)
         void getTdcHist(unsigned int*& rTdcHist, cpp_bool copy)
+        void getTdcTriggerDistanceHist(unsigned int*& rTdcTriggerDistanceHist, cpp_bool copy)
         void getRelBcidHist(unsigned int*& rRelBcidHist, cpp_bool copy)  # returns the relative BCID histogram for all hits
         void getTdcPixelHist(unsigned short*& rTdcPixelHist, cpp_bool copy)  # returns the tdc pixel histogram for all hits
         void getTotPixelHist(unsigned short*& rTotPixelHist, cpp_bool copy)  # returns the tot pixel histogram for all hits
@@ -103,6 +105,8 @@ cdef class PyDataHistograming:
         self.thisptr.createMeanTotHist(<cpp_bool> toggle)
     def create_tdc_hist(self,toggle):
         self.thisptr.createTdcHist(<cpp_bool> toggle)
+    def create_tdc_distance_hist(self,toggle):
+        self.thisptr.createTdcTriggerDistanceHist(<cpp_bool> toggle)
     def create_tdc_pixel_hist(self,toggle):
         self.thisptr.createTdcPixelHist(<cpp_bool> toggle)
     def create_tot_pixel_hist(self,toggle):
@@ -127,6 +131,10 @@ cdef class PyDataHistograming:
         self.thisptr.getTdcHist(<unsigned int*&> data_32, <cpp_bool> False)
         if data_32 != NULL:
             return data_to_numpy_array_uint32(data_32, 4096)
+    def get_tdc_distance_hist(self):
+        self.thisptr.getTdcTriggerDistanceHist(<unsigned int*&> data_32, <cpp_bool> False)
+        if data_32 != NULL:
+            return data_to_numpy_array_uint32(data_32, 256)
     def get_rel_bcid_hist(self):
         self.thisptr.getRelBcidHist(<unsigned int*&> data_32, <cpp_bool> False)
         if data_32 != NULL:
