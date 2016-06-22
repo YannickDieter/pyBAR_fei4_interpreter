@@ -13,6 +13,7 @@ Histogram::~Histogram(void)
 	deleteOccupancyArray();
 	deleteTotArray();
 	deleteTdcArray();
+	deleteTdcTriggerDistanceArray();
 	deleteRelBcidArray();
 	deleteTotPixelArray();
 	deleteTdcPixelArray();
@@ -30,6 +31,7 @@ void Histogram::setStandardSettings()
 	_tot = 0;
 	_meanTot = 0;
 	_tdc = 0;
+	_tdcTriggerDistance = 0;
 	_totPixel = 0;
 	_tdcPixel = 0;
 	_NparameterValues = 1;
@@ -93,6 +95,17 @@ void Histogram::createTdcHist(bool CreateTdcHist)
 		deleteTdcArray();
 }
 
+void Histogram::createTdcTriggerDistanceHist(bool CreateTdcTriggerDistanceHist)
+{
+	_createTdcTriggerDistanceHist = CreateTdcTriggerDistanceHist;
+	if (_createTdcTriggerDistanceHist){
+		allocateTdcTriggerDistanceArray();
+		resetTdcTriggerDistanceArray();
+	}
+	else
+		deleteTdcTriggerDistanceArray();
+}
+
 void Histogram::createTdcPixelHist(bool CreateTdcPixelHist)
 {
 	_createTdcPixelHist = CreateTdcPixelHist;
@@ -137,7 +150,10 @@ void Histogram::addHits(HitInfo*& rHitInfo, const unsigned int& rNhits)
 			throw std::out_of_range("ToT index out of range.");
 		unsigned int tTdc = rHitInfo[i].TDC;
 		if(tTdc >= __N_TDC_VALUES)
-			throw std::out_of_range("TDC counter " + IntToStr(tTdc) + " index out of range.");
+			throw std::out_of_range("TDC value " + IntToStr(tTdc) + " index out of range.");
+		unsigned int tTdcTriggerDistance = rHitInfo[i].TDC_time_stamp;
+		if(tTdcTriggerDistance >= __N_TDC_DIST_VALUES)
+			throw std::out_of_range("TDC distance " + IntToStr(tTdc) + " index out of range.");
 		unsigned int tRelBcid = rHitInfo[i].relative_BCID;
 		if(tRelBcid >= __MAXBCID)
 			throw std::out_of_range("Relative BCID index out of range.");
@@ -176,6 +192,8 @@ void Histogram::addHits(HitInfo*& rHitInfo, const unsigned int& rNhits)
 				_tot[tTot] += 1;
 		if(_createTdcHist)
 			_tdc[tTdc] += 1;
+		if(_createTdcTriggerDistanceHist)
+			_tdc[tTdcTriggerDistance] += 1;
 		if(_createTdcPixelHist){
 			if (_tdcPixel != 0){
 				 if(tTdc >= __N_TDC_PIXEL_VALUES){
@@ -400,7 +418,19 @@ void Histogram::allocateTdcArray()
 	_tdc = new unsigned int[__N_TDC_VALUES];
 	}
 	catch(std::bad_alloc& exception){
-	error(std::string("allocateTotArray: ")+std::string(exception.what()));
+	error(std::string("allocateTdcArray: ")+std::string(exception.what()));
+	}
+}
+
+void Histogram::allocateTdcTriggerDistanceArray()
+{
+	debug("allocateTdcTriggerDistanceArray()");
+	deleteTdcTriggerDistanceArray();
+	try{
+	_tdcTriggerDistance = new unsigned int[__N_TDC_DIST_VALUES];
+	}
+	catch(std::bad_alloc& exception){
+	error(std::string("allocateTdcTriggerDistanceArray: ")+std::string(exception.what()));
 	}
 }
 
@@ -425,6 +455,17 @@ void Histogram::resetTdcArray()
 		}
 	}
 }
+
+void Histogram::resetTdcTriggerDistanceArray()
+{
+	info("resetTdcTriggerDistanceArray()");
+	if (_createTdcTriggerDistanceHist){
+		if (_tdcTriggerDistance != 0){
+			for (unsigned int i = 0; i < __N_TDC_DIST_VALUES; i++)
+			_tdcTriggerDistance[(size_t)i] = 0;
+		}
+	}
+}
 	
 void Histogram::deleteTotArray()
 {
@@ -440,6 +481,14 @@ void Histogram::deleteTdcArray()
 	if (_tdc != 0)
 	delete[] _tdc;
 	_tdc = 0;
+}
+
+void Histogram::deleteTdcTriggerDistanceArray()
+{
+	debug("deleteTdcTriggerDistanceArray()");
+	if (_tdcTriggerDistance != 0)
+	delete[] _tdcTriggerDistance;
+	_tdcTriggerDistance = 0;
 }
 
 void Histogram::allocateRelBcidArray()
@@ -579,6 +628,15 @@ void Histogram::getTdcHist(unsigned int*& rTdcHist, bool copy)
 		rTdcHist = _tdc;
 }
 
+void Histogram::getTdcTriggerDistanceHist(unsigned int*& rTdcTriggerDistanceHist, bool copy)
+{
+	debug("getTdcTriggerDistanceHist(...)");
+	if(copy)
+		std::copy(_tdcTriggerDistance, _tdcTriggerDistance+__N_TDC_DIST_VALUES, rTdcTriggerDistanceHist);
+	else
+		rTdcTriggerDistanceHist = _tdcTriggerDistance;
+}
+
 void Histogram::getRelBcidHist(unsigned int*& rRelBcidHist, bool copy)
 {
 	debug("getRelBcidHist(...)");
@@ -665,6 +723,7 @@ void Histogram::reset()
 	resetTotArray();
 	resetMeanTotArray();
 	resetTdcArray();
+	resetTdcTriggerDistanceArray();
 	resetTotPixelArray();
 	resetTdcPixelArray();
 	resetRelBcidArray();
