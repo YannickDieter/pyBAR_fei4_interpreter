@@ -568,7 +568,7 @@ void Interpret::printSummary()
 	std::cout << "# Small/Late Hits   " << std::right << std::setw(15) << _nSmallHits << "\n";
 	std::cout << "# MaxHitsPerEvent   " << std::right << std::setw(15) << _nMaxHitsPerEvent << "\n\n";
 
-	std::cout << "# ErrorCounters \n";
+	std::cout << "# ErrorCounters\n";
 	std::cout << "0 " << std::right << std::setw(15) << _errorCounter[0] << " Events with SR\n";
 	std::cout << "1 " << std::right << std::setw(15) << _errorCounter[1] << " Events without trigger word\n";
 	std::cout << "2 " << std::right << std::setw(15) << _errorCounter[2] << " Events without constant LVL1ID\n";
@@ -580,14 +580,14 @@ void Interpret::printSummary()
 	std::cout << "8 " << std::right << std::setw(15) << _errorCounter[8] << " Events with TDC words\n";
 	std::cout << "9 " << std::right << std::setw(15) << _errorCounter[9] << " Events with >1 TDC words\n";
 	std::cout << "10" << std::right << std::setw(15) << _errorCounter[10] << " Events with TDC overflow\n";
-	std::cout << "11" << std::right << std::setw(15) << _errorCounter[11] << " Events without hits\n\n";
-	std::cout << "12" << std::right << std::setw(15) << _errorCounter[12] << " Events with other data words";
+	std::cout << "11" << std::right << std::setw(15) << _errorCounter[11] << " Events without hits\n";
+	std::cout << "12" << std::right << std::setw(15) << _errorCounter[12] << " Events with other data words\n\n";
 
-	std::cout << "# TriggerErrorCounters \n";
+	std::cout << "# TriggerErrorCounters\n";
 	std::cout << "0 " << std::right << std::setw(15) << _triggerErrorCounter[0] << " Trigger number not increasing by 1\n";
 	std::cout << "1 " << std::right << std::setw(15) << _triggerErrorCounter[1] << " # Trigger per event > 1\n\n";
 
-	std::cout << "# ServiceRecords \n";
+	std::cout << "# ServiceRecords\n";
 	for (unsigned int i = 0; i < __NSERVICERECORDS; ++i)
 		std::cout << std::left << std::setw(2) << i << std::right << std::setw(15) << _serviceRecordCounter[i] << "\n";
 }
