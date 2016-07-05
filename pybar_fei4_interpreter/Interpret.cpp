@@ -557,7 +557,7 @@ unsigned int Interpret::getNwords()
 void Interpret::printSummary()
 {
 	std::cout << "# Data Words        " << std::right << std::setw(15) << _nDataWords << "\n";
-	std::cout << "# Data Header       " << std::right << std::setw(15) << _nDataHeaders << "\n";
+	std::cout << "# Data Headers      " << std::right << std::setw(15) << _nDataHeaders << "\n";
 	std::cout << "# Data Records      " << std::right << std::setw(15) << _nDataRecords << "\n";
 	std::cout << "# Service Records   " << std::right << std::setw(15) << _nServiceRecords << "\n";
 	std::cout << "# Other Words       " << std::right << std::setw(15) << _nOtherWords << "\n";
