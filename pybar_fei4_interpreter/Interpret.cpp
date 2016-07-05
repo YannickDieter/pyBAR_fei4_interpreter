@@ -71,22 +71,22 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 	int tActualRow2 = 0;				//row position of the second hit in the actual data record
 	int tActualTot2 = -1;				//tot value of the second hit in the actual data record
 
-	for (unsigned int iWord = 0; iWord < pNdataWords; ++iWord) {	//loop over the SRAM words
+	for (unsigned int iWord = 0; iWord < pNdataWords; ++iWord) { // loop over the SRAM words
 		if (_debugEvents) {
 			if (_nEvents >= _startDebugEvent && _nEvents <= _stopDebugEvent)
 				setDebugOutput();
 			else
 				setDebugOutput(false);
 			setInfoOutput(false);
-			setWarningOutput(false);  // FIXME: do not unset this always
+			setWarningOutput(false); // TODO: do not always set to false
 		}
 
 		_nDataWords++;
-		unsigned int tActualWord = pDataWords[iWord];			//take the actual SRAM word
-		tActualTot1 = -1;												          //TOT1 value stays negative if it can not be set properly in getHitsfromDataRecord()
-		tActualTot2 = -1;												          //TOT2 value stays negative if it can not be set properly in getHitsfromDataRecord()
-		if (getTimefromDataHeader(tActualWord, tActualLVL1ID, tActualBCID)) {	//data word is data header if true is returned
-			_nDataHeaders++;
+		unsigned int tActualWord = pDataWords[iWord]; // take the actual SRAM word
+		tActualTot1 = -1; // TOT1 value stays negative if it can not be set properly in getHitsfromDataRecord()
+		tActualTot2 = -1; // TOT2 value stays negative if it can not be set properly in getHitsfromDataRecord()
+		if (getTimefromDataHeader(tActualWord, tActualLVL1ID, tActualBCID)) { // data word is data header if true is returned
+			_nDataHeaders++; // increase global data header counter
 			if (tNdataHeader > _NbCID - 1) { // maximum event window is reached (tNdataHeader > BCIDs, mostly tNdataHeader > 15)
 				if (_alignAtTriggerNumber) { // do not create new event
 					addEventErrorCode(__TRUNC_EVENT);
@@ -97,53 +97,53 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					addEvent();
 				}
 			}
-			if (tNdataHeader == 0) {								        //set the BCID of the first data header
+			if (tNdataHeader == 0) { // set the BCID of the first data header
 				tStartBCID = tActualBCID;
 				tStartLVL1ID = tActualLVL1ID;
 			}
 			else {
-				tDbCID++;										        //increase relative BCID counter [0:15]
+				tDbCID++; // increase relative BCID counter [0:15]
 				if (_fEI4B) {
-					if (tStartBCID + tDbCID > __BCIDCOUNTERSIZE_FEI4B - 1)	//BCID counter overflow for FEI4B (10 bit BCID counter)
+					if (tStartBCID + tDbCID > __BCIDCOUNTERSIZE_FEI4B - 1) // BCID counter overflow for FEI4B (10 bit BCID counter)
 						tStartBCID = tStartBCID - __BCIDCOUNTERSIZE_FEI4B;
 				}
 				else {
-					if (tStartBCID + tDbCID > __BCIDCOUNTERSIZE_FEI4A - 1)	//BCID counter overflow for FEI4A (8 bit BCID counter)
+					if (tStartBCID + tDbCID > __BCIDCOUNTERSIZE_FEI4A - 1) // BCID counter overflow for FEI4A (8 bit BCID counter)
 						tStartBCID = tStartBCID - __BCIDCOUNTERSIZE_FEI4A;
 				}
 
-				if (tStartBCID + tDbCID != tActualBCID) {  //check if BCID is increasing by 1s in the event window, if not close actual event and create new event with actual data header
-					if (tActualLVL1ID == tStartLVL1ID) { //happens sometimes, non inc. BCID, FE feature, only abort if the LVL1ID is not constant (if no external trigger is used or)
+				if (tStartBCID + tDbCID != tActualBCID) { // check if BCID is increasing by 1 in the event window, if not close actual event and create new event with actual data header
+					if (tActualLVL1ID == tStartLVL1ID) { // happens sometimes, non inc. BCID, FE feature, only abort if the LVL1ID is not constant (if no external trigger is used or)
 						addEventErrorCode(__BCID_JUMP);
 						if (Basis::infoSet())
 							info("interpretRawData: BCID jumping: " + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents));
-					} else if (_alignAtTriggerNumber || _alignAtTdcWord) { //rely here on the trigger number or TDC word and do not start a new event
+					} else if (_alignAtTriggerNumber || _alignAtTdcWord) { // rely here on the trigger number or TDC word and do not start a new event
 						addEventErrorCode(__BCID_JUMP);
 						if (Basis::infoSet())
 							info("interpretRawData: BCID jumping: " + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents));
 					} else {
-						tBCIDerror = true;					       //BCID number wrong, abort event and take actual data header for the first hit of the new event
+						tBCIDerror = true; // BCID number wrong, abort event and take actual data header for the first hit of the new event
 						addEventErrorCode(__EVENT_INCOMPLETE);
 					}
 				}
-				if (!tBCIDerror && tActualLVL1ID != tStartLVL1ID) {    //LVL1ID not constant, is expected for CMOS pulse trigger/hit OR, but not for trigger word triggering
+				if (!tBCIDerror && tActualLVL1ID != tStartLVL1ID) { // LVL1ID not constant, is expected for CMOS pulse trigger/HitOR self-trigger, but not for trigger word triggering
 					addEventErrorCode(__NON_CONST_LVL1ID);
 					if (Basis::infoSet())
 						info("interpretRawData: LVL1 is not constant: " + IntToStr(tActualLVL1ID) + "!=" + IntToStr(tStartLVL1ID) + " at event " + LongIntToStr(_nEvents));
 				}
 			}
-			tNdataHeader++;										       //increase data header counter
+			tNdataHeader++; // increase event data header counter
 			if (Basis::debugSet())
 				debug(std::string(" ") + IntToStr(_nDataWords) + " DH LVL1ID/BCID " + IntToStr(tActualLVL1ID) + "/" + IntToStr(tActualBCID) + "\t" + LongIntToStr(_nEvents));
 		}
-		else if (isTriggerWord(tActualWord)) { //data word is trigger word, is first word of the event data if external trigger is present
-			_nTriggers++;						//increase the total trigger number counter
-			if (!_alignAtTriggerNumber) {			// first word is not always the trigger number
+		else if (isTriggerWord(tActualWord)) { // data word is trigger word, is first word of the event data if external trigger is present
+			_nTriggers++; // increase global trigger word counter
+			if (!_alignAtTriggerNumber) { // first word is not always the trigger number
 				if (tNdataHeader > _NbCID - 1)
 					addEvent();
 			}
-			else {		// use trigger number for event building, first word is trigger word in event data stream
-				if (_firstTriggerNrSet) { // do not build new event after first trigger
+			else { // use trigger number for event building, first word is trigger word in event data stream
+				if (_firstTriggerNrSet) { // prevent building new event for the very first trigger word
 					addEvent();
 				}
 				else if (tNdataHeader > _NbCID - 1) { // for old data where trigger word (first raw data word) might be missing
@@ -152,12 +152,12 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 				}
 
 			}
-			tTriggerWord++;                     //trigger event counter increase
+			tTriggerWord++; // increase event trigger word counter
 
 			if (!_useTriggerTimeStamp)
-				tTriggerNumber = TRIGGER_NUMBER_MACRO_NEW(tActualWord); //actual trigger number
+				tTriggerNumber = TRIGGER_NUMBER_MACRO_NEW(tActualWord); // actual trigger number
 			else
-				tTriggerNumber = TRIGGER_TIME_STAMP_MACRO(tActualWord); //actual trigger number is a time stamp
+				tTriggerNumber = TRIGGER_TIME_STAMP_MACRO(tActualWord); // actual trigger number is a time stamp
 
 			if (Basis::debugSet()) {
 				if (!_useTriggerTimeStamp)
@@ -166,7 +166,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					debug(std::string(" ") + IntToStr(_nDataWords) + " TR TIME STAMP " + IntToStr(tTriggerNumber) + "\t WORD " + IntToStr(tActualWord) + "\t" + LongIntToStr(_nEvents));
 			}
 
-			//TLU error handling
+			// TLU error handling
 			if (!_firstTriggerNrSet)
 				_firstTriggerNrSet = true;
 			else if (!_useTriggerTimeStamp && (_lastTriggerNumber + 1 != tTriggerNumber) && !(_lastTriggerNumber == _maxTriggerNumber && tTriggerNumber == 0)) {
@@ -756,7 +756,7 @@ void Interpret::addEvent()
 	}
 	if (tTriggerWord == 0) {
 		addEventErrorCode(__NO_TRG_WORD);
-		if (_firstTriggerNrSet)  // set the last existing trigger number for events without trigger number if trigger numbers exist
+		if (_firstTriggerNrSet) // set the last existing trigger number for events without trigger number if trigger numbers exist
 			tEventTriggerNumber = _lastTriggerNumber;
 	}
 	if (tTriggerWord > 1) {
