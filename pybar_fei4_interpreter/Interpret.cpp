@@ -138,18 +138,23 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 		}
 		else if (isTriggerWord(tActualWord)) { // data word is trigger word, is first word of the event data if external trigger is present
 			_nTriggers++; // increase global trigger word counter
-			if (!_alignAtTriggerNumber) { // first word is not always the trigger number
-				if (tNdataHeader > _NbCID - 1)
-					addEvent();
-			}
-			else { // use trigger number for event building, first word is trigger word in event data stream
-				if (_firstTriggerNrSet) { // prevent building new event for the very first trigger word
-					addEvent();
-				}
-				else if (tNdataHeader > _NbCID - 1) { // for old data where trigger word (first raw data word) might be missing
+			if (_alignAtTriggerNumber) { // use trigger number for event building, first word is trigger word in event data stream
+				// check for _firstTriggerNrSet, prevent building new event for the very first trigger word
+				if (_firstTriggerNrSet && tNdataHeader > _NbCID - 1) { // for old data where trigger word (first raw data word) might be missing
 					addEventErrorCode(__NO_TRG_WORD);
 					addEvent();
 				}
+				else if (_firstTriggerNrSet && tNdataHeader < _NbCID) { // when data headers are missing
+					addEventErrorCode(__EVENT_INCOMPLETE);
+					addEvent();
+				}
+				else if (_firstTriggerNrSet) { // usually the case
+					addEvent();
+				}
+			else { // first word is not always the trigger number
+				if (tNdataHeader > _NbCID - 1)
+					addEvent();
+			}
 
 			}
 			tTriggerWord++; // increase event trigger word counter
