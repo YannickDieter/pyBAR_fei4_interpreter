@@ -192,7 +192,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			addEventErrorCode(__HAS_SR);
 			_nServiceRecords++;
 		}
-		else if (isTdcWord(tActualWord)) {	//data word is a tdc word
+		else if (isTdcWord(tActualWord)) { // data word is a TDC word
 			addTdcValue(TDC_COUNT_MACRO(tActualWord));
 			_nTDCWords++;
 			if (_useTdcTriggerTimeStamp && (TDC_TRIG_DIST_MACRO(tActualWord) > _maxTdcDelay)){  // of the trigger distance if > _maxTdcDelay the TDC word does not belong to this event, thus ignore it
@@ -232,12 +232,12 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 				addEventErrorCode(__TDC_OVERFLOW);
 			if (Basis::debugSet()) {
 				if (_useTdcTriggerTimeStamp)
-					debug(std::string(" ") + IntToStr(_nDataWords) + " TDC COUNT " + IntToStr(TDC_COUNT_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TRG DIST TIME STAMP " + IntToStr(TDC_TRIG_DIST_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
+					debug(std::string(" ") + IntToStr(_nDataWords) + " TDC COUNT " + IntToStr(TDC_COUNT_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TRG DIST " + IntToStr(TDC_TRIG_DIST_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
 				else
 					debug(std::string(" ") + IntToStr(_nDataWords) + " TDC COUNT " + IntToStr(TDC_COUNT_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TIME STAMP " + IntToStr(TDC_TIME_STAMP_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
 			}
 		}
-		else if (isDataRecord(tActualWord)) {	//data word is data record if true is returned
+		else if (isDataRecord(tActualWord)) { // data word is data record if true is returned
 			if (getHitsfromDataRecord(tActualWord, tActualCol1, tActualRow1, tActualTot1, tActualCol2, tActualRow2, tActualTot2)) {
 				tNdataRecord++;										  //increase data record counter for this event
 				_nDataRecords++;									  //increase total data record counter
@@ -262,22 +262,34 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					debug(std::string(" ") + IntToStr(_nDataWords) + " UNKNOWN WORD " + IntToStr(tActualWord) + " at event " + LongIntToStr(_nEvents));
 			}
 		}
+		else if (isAddressRecord(tActualWord)) { // data word is address record if true is returned
+			_nAddressRecords++;
+			if (Basis::debugSet()) {
+				unsigned int tAddress = 0;
+				bool isShiftRegister = false;
+				if (isAddressRecord(tActualWord, tAddress, isShiftRegister)) {
+					if (isShiftRegister)
+						debug(std::string(" ") + IntToStr(_nDataWords) + " ADDRESS RECORD SHIFT REG. " + IntToStr(tAddress) + " WORD " + IntToStr(tActualWord) + "\t" + LongIntToStr(_nEvents));
+					else
+						debug(std::string(" ") + IntToStr(_nDataWords) + " ADDRESS RECORD GLOBAL REG. " + IntToStr(tAddress) + " WORD " + IntToStr(tActualWord) + "\t" + LongIntToStr(_nEvents));
+				}
+			}
+		}
+		else if (isValueRecord(tActualWord)) { // data word is value record if true is returned
+			_nValueRecords++;
+			if (Basis::debugSet()) {
+				unsigned int tValue = 0;
+				if (isValueRecord(tActualWord, tValue)) {
+					debug(std::string(" ") + IntToStr(_nDataWords) + " VALUE RECORD " + IntToStr(tValue) + "\t" + LongIntToStr(_nEvents));
+				}
+			}
+		}
 		else {
 			if (isOtherWord(tActualWord)) { // other data words
+				addEventErrorCode(__OTHER_WORD);
 				_nOtherWords++;
 				if (Basis::debugSet()) {
-					unsigned int tAddress = 0;
-					bool isShiftRegister = false;
-					unsigned int tValue = 0;
-					if (isAddressRecord(tActualWord, tAddress, isShiftRegister)) {
-						if (isShiftRegister)
-							debug(std::string(" ") + IntToStr(_nDataWords) + " ADDRESS RECORD SHIFT REG. " + IntToStr(tAddress) + " WORD " + IntToStr(tActualWord) + "\t" + LongIntToStr(_nEvents));
-						else
-							debug(std::string(" ") + IntToStr(_nDataWords) + " ADDRESS RECORD GLOBAL REG. " + IntToStr(tAddress) + " WORD " + IntToStr(tActualWord) + "\t" + LongIntToStr(_nEvents));
-					}
-					if (isValueRecord(tActualWord, tValue)) {
-						debug(std::string(" ") + IntToStr(_nDataWords) + " VALUE RECORD " + IntToStr(tValue) + "\t" + LongIntToStr(_nEvents));
-					}
+					debug(std::string(" ") + IntToStr(_nDataWords) + " OTHER WORD " + IntToStr(tActualWord) + " at event " + LongIntToStr(_nEvents));
 				}
 			}
 			else { // remaining data words, unknown words
@@ -402,6 +414,8 @@ void Interpret::resetCounters()
 	_nIncompleteEvents = 0;
 	_nDataRecords = 0;
 	_nDataHeaders = 0;
+	_nAddressRecords = 0;
+	_nValueRecords = 0;
 	_nServiceRecords = 0;
 	_nUnknownWords = 0;
 	_nTDCWords = 0;
@@ -559,10 +573,12 @@ void Interpret::printSummary()
 	std::cout << "# Data Words        " << std::right << std::setw(15) << _nDataWords << "\n";
 	std::cout << "# Data Headers      " << std::right << std::setw(15) << _nDataHeaders << "\n";
 	std::cout << "# Data Records      " << std::right << std::setw(15) << _nDataRecords << "\n";
+	std::cout << "# Address Records   " << std::right << std::setw(15) << _nAddressRecords << "\n";
+	std::cout << "# Value Records     " << std::right << std::setw(15) << _nValueRecords << "\n";
 	std::cout << "# Service Records   " << std::right << std::setw(15) << _nServiceRecords << "\n";
-	std::cout << "# Other Words       " << std::right << std::setw(15) << _nOtherWords << "\n";
 	std::cout << "# TDC Words         " << std::right << std::setw(15) << _nTDCWords << "\n";
 	std::cout << "# Trigger Words     " << std::right << std::setw(15) << _nTriggers << "\n";
+	std::cout << "# Other Words       " << std::right << std::setw(15) << _nOtherWords << "\n";
 	std::cout << "# Unknown Words     " << std::right << std::setw(15) << _nUnknownWords << "\n\n";
 
 	std::cout << "# Events            " << std::right << std::setw(15) << _nEvents << "\n";
@@ -642,6 +658,8 @@ void Interpret::printStatus()
 	std::cout << "_nServiceRecords " << _nServiceRecords << "\n";
 	std::cout << "_nDataRecords " << _nDataRecords << "\n";
 	std::cout << "_nDataHeaders " << _nDataHeaders << "\n";
+	std::cout << "_nAddressRecords " << _nAddressRecords << "\n";
+	std::cout << "_nValueRecords " << _nValueRecords << "\n";
 	std::cout << "_nHits " << _nHits << "\n";
 	std::cout << "_nSmallHits " << _nSmallHits << "\n";
 	std::cout << "_nDataWords " << _nDataWords << "\n";
@@ -945,6 +963,14 @@ bool Interpret::isAddressRecord(const unsigned int& pSRAMWORD, unsigned int& rAd
 	return false;
 }
 
+bool Interpret::isAddressRecord(const unsigned int& pSRAMWORD)
+{
+	if (ADDRESS_RECORD_MACRO(pSRAMWORD)) {
+		return true;
+	}
+	return false;
+}
+
 bool Interpret::isValueRecord(const unsigned int& pSRAMWORD, unsigned int& rValue)
 {
 	if (VALUE_RECORD_MACRO(pSRAMWORD)) {
@@ -954,9 +980,17 @@ bool Interpret::isValueRecord(const unsigned int& pSRAMWORD, unsigned int& rValu
 	return false;
 }
 
+bool Interpret::isValueRecord(const unsigned int& pSRAMWORD)
+{
+	if (VALUE_RECORD_MACRO(pSRAMWORD)) {
+		return true;
+	}
+	return false;
+}
+
 bool Interpret::isOtherWord(const unsigned int& pSRAMWORD)
 {
-	if (ADDRESS_RECORD_MACRO(pSRAMWORD) || VALUE_RECORD_MACRO(pSRAMWORD) || OTHER_WORD_MACRO(pSRAMWORD))
+	if (OTHER_WORD_MACRO(pSRAMWORD))
 		return true;
 	return false;
 }

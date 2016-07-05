@@ -94,8 +94,10 @@ private:
 	bool getInfoFromServiceRecord(const unsigned int& pSRAMWORD, unsigned int& pSRcode, unsigned int& pSRcount); //returns true if the SRAMword is a service record and sets pSRcode, pSRcount
 	bool isTriggerWord(const unsigned int& pSRAMWORD);										//returns true if data word is trigger word
 	bool isAddressRecord(const unsigned int& pSRAMWORD, unsigned int& rAddress, bool& isShiftRegister); //returns true if data word is a address record
+	bool isAddressRecord(const unsigned int& pSRAMWORD);									//returns true if data word is a address record
 	bool isValueRecord(const unsigned int& pSRAMWORD, unsigned int& rValue);				//returns true if data word is a value record
-	bool isOtherWord(const unsigned int& pSRAMWORD);										//returns true if data word is other word than TDC, Trigger or FEI4 data word
+	bool isValueRecord(const unsigned int& pSRAMWORD);										//returns true if data word is a value record
+	bool isOtherWord(const unsigned int& pSRAMWORD);										//returns true if data word is other word than TDC, trigger or FEI4 data word
 
 	// Service record / error histogramming methods
 	void addTriggerErrorCode(const unsigned char& pErrorCode);                              //adds the trigger error code to the existing error code
@@ -176,12 +178,17 @@ private:
 	unsigned int _nMaxHitsPerEvent;				//number of the maximum hits per event
 	unsigned int _nEmptyEvents;				  	//number of events with no records
 	unsigned int _nIncompleteEvents;			//number of events with incomplete data structure (# data header != _NbCID)
-	unsigned int _nTDCWords;					//number of TDC words found
-	unsigned int _nUnknownWords;				//number of unknowns words found
-	unsigned int _nOtherWords;					//Address or value records
-	unsigned int _nServiceRecords;				//total number of service records found
-	unsigned int _nDataRecords;					//total number of data records found
+
+
+
 	unsigned int _nDataHeaders;					//total number of data headers found
+	unsigned int _nDataRecords;					//total number of data records found
+	unsigned int _nAddressRecords;				//total number of address records found
+	unsigned int _nValueRecords;				//total number of value records found
+	unsigned int _nServiceRecords;				//total number of service records found
+	unsigned int _nTDCWords;					//number of TDC words found
+	unsigned int _nOtherWords;					//Address or value records
+	unsigned int _nUnknownWords;				//number of unknowns words found
 	unsigned int _nHits;						//total number of hits found
 	unsigned int _nSmallHits;					//total number of small hits (ToT code 14)
 	unsigned int _nDataWords;					//total number of data words
