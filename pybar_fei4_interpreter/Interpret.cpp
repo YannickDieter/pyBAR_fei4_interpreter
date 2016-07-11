@@ -91,7 +91,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 				if (_alignAtTriggerNumber) { // do not create new event
 					addEventErrorCode(__TRUNC_EVENT);
 					if (Basis::warningSet())
-						warning("interpretRawData: " + IntToStr(_nDataWords) + " DH " + IntToStr(tActualWord) + " at event " + LongIntToStr(_nEvents) + " too many data headers");
+						warning("interpretRawData: " + IntToStr(_nDataWords) + " DH " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tNdataHeader) + ">" + IntToStr(_NbCID - 1) + " at event " + LongIntToStr(_nEvents) + " aligning at trigger number, too many data headers (set __TRUNC_EVENT)");
 				}
 				else { // create new event
 					addEvent();
@@ -116,37 +116,44 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					if (tActualLVL1ID == tStartLVL1ID) { // happens sometimes, non inc. BCID, FE feature, only abort if the LVL1ID is not constant (if no external trigger is used or)
 						addEventErrorCode(__BCID_JUMP);
 						if (Basis::infoSet())
-							info("interpretRawData: BCID jumping: " + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents));
+							info("interpretRawData: " + IntToStr(_nDataWords) + " DH " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents) + " BCID jumping");
 					} else if (_alignAtTriggerNumber || _alignAtTdcWord) { // rely here on the trigger number or TDC word and do not start a new event
 						addEventErrorCode(__BCID_JUMP);
 						if (Basis::infoSet())
-							info("interpretRawData: BCID jumping: " + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents));
+							info("interpretRawData: " + IntToStr(_nDataWords) + " DH " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents) + " BCID jumping");
 					} else {
 						tBCIDerror = true; // BCID number wrong, abort event and take actual data header for the first hit of the new event
 						addEventErrorCode(__EVENT_INCOMPLETE);
+						if (Basis::infoSet())
+							info("interpretRawData: " + IntToStr(_nDataWords) + " DH " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tStartBCID + tDbCID) + "!=" + IntToStr(tActualBCID) + " at event " + LongIntToStr(_nEvents) + " event incomplete");
 					}
 				}
 				if (!tBCIDerror && tActualLVL1ID != tStartLVL1ID) { // LVL1ID not constant, is expected for CMOS pulse trigger/HitOR self-trigger, but not for trigger word triggering
 					addEventErrorCode(__NON_CONST_LVL1ID);
 					if (Basis::infoSet())
-						info("interpretRawData: LVL1 is not constant: " + IntToStr(tActualLVL1ID) + "!=" + IntToStr(tStartLVL1ID) + " at event " + LongIntToStr(_nEvents));
+						info("interpretRawData: " + IntToStr(_nDataWords) + " DH " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tActualLVL1ID) + "!=" + IntToStr(tStartLVL1ID) + " at event " + LongIntToStr(_nEvents) + " LVL1 is not constant");
 				}
 			}
 			tNdataHeader++; // increase event data header counter
 			if (Basis::debugSet())
-				debug(std::string(" ") + IntToStr(_nDataWords) + " DH LVL1ID/BCID " + IntToStr(tActualLVL1ID) + "/" + IntToStr(tActualBCID) + "\t" + LongIntToStr(_nEvents));
+				debug(std::string(" ") + IntToStr(_nDataWords) + " DH " + "\t WORD " + IntToStr(tActualWord) + "\t" + "LVL1ID/BCID " + IntToStr(tActualLVL1ID) + "/" + IntToStr(tActualBCID) + "\t" + LongIntToStr(_nEvents));
 		}
 		else if (isTriggerWord(tActualWord)) { // data word is trigger word, is first word of the event data if external trigger is present
 			_nTriggers++; // increase global trigger word counter
 			if (_alignAtTriggerNumber) { // use trigger number for event building, first word is trigger word in event data stream
 				// check for _firstTriggerNrSet, prevent building new event for the very first trigger word
 				if (_firstTriggerNrSet && tNdataHeader > _NbCID) { // for old data where trigger word (first raw data word) might be missing
+					if (Basis::infoSet())
+						info("interpretRawData: " + IntToStr(_nDataWords) + " TW " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tNdataHeader) + ">" + IntToStr(_NbCID) + " at event " + LongIntToStr(_nEvents) +  " missing trigger (adding new event)");
 					addEventErrorCode(__NO_TRG_WORD);
 					addEvent();
 				}
 				else if (_firstTriggerNrSet && tNdataHeader < _NbCID) { // when data headers are missing
+					if (Basis::infoSet())
+						info("interpretRawData: " + IntToStr(_nDataWords) + " TW " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tNdataHeader) + "<" + IntToStr(_NbCID) + " at event " + LongIntToStr(_nEvents) + " event incomplete (adding new event)");
 					addEventErrorCode(__EVENT_INCOMPLETE);
 					addEvent();
+
 				}
 				else if (_firstTriggerNrSet) { // usually the case
 					addEvent();
