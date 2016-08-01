@@ -32,7 +32,7 @@ void Interpret::setStandardSettings()
 	_hitIndex = 0;
 	_startDebugEvent = 0;
 	_stopDebugEvent = 0;
-	_NbCID = 16;
+	_NbCID = 16; // my vary from 1 to 16, or up to 256 when using FE stop-mode
 	_maxTot = 13;
 	_fEI4B = true;
 	_metaDataSet = false;
@@ -48,7 +48,7 @@ void Interpret::setStandardSettings()
 	_alignAtTriggerNumber = false;
 	_useTriggerTimeStamp = false;
 	_useTdcTriggerDistance = false;
-	_maxTdcDelay = 255;
+	_maxTdcDelay = 255; // make it 255 to not filter TDC words by default
 	_alignAtTdcWord = false;
 	_dataWordIndex = 0;
 	_maxTriggerNumber = (2 ^ 31) - 1;
@@ -246,14 +246,15 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 								tTdcCount = TDC_VALUE_MACRO(tActualWord);
 							}
 						}
-						// ignore all other invalid TDC words with TDC distance == 255 or TDC value == 0, do not set event error
+						// ignore all other invalid TDC words with TDC distance == 255 or TDC value == 0, do not set any event error
 					}
 					else {
 						addEventErrorCode(__MANY_TDC_WORDS);
 					}
 				}
-				else {
+				else { // first occurrence of a TDC word
 					addEventErrorCode(__TDC_WORD);
+					// set TDC value
 					tTdcCount = TDC_VALUE_MACRO(tActualWord);
 					if (_useTdcTriggerDistance) {
 						tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord); // TODO: use TDC_TIME_STAMP_SHORT_MACRO, add tTdcDistance variable
