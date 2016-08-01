@@ -826,9 +826,9 @@ void Interpret::addEvent()
 		if (Basis::warningSet())
 			warning(std::string("addEvent: # trigger words > 1 at event " + LongIntToStr(_nEvents)));
 	}
-	if ((_useTdcTriggerDistance && tTdcTimeStamp >= 255) || tTdcCount == 0)
-		addEventErrorCode(__MANY_TDC_WORDS);
-	if (tTdcCount >= 4095)
+	if ((tErrorCode & __TDC_WORD) == __TDC_WORD && ((_useTdcTriggerDistance && (tTdcTimeStamp >= 255)) || tTdcCount == 0)) // analyze error values from FPGA, a valid TDC word has a TDC distance (timestamp) < 255 and TDC value (count) > 0
+		addEventErrorCode(__MANY_TDC_WORDS); // use __MANY_TDC_WORDS for overlapping TDC values
+	if ((tErrorCode & __TDC_WORD) == __TDC_WORD && tTdcCount >= 4095)
 		addEventErrorCode(__TDC_OVERFLOW);
 
 	storeEventHits();
