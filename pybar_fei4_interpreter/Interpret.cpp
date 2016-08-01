@@ -206,7 +206,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 		else if (isTdcWord(tActualWord)) { // data word is a TDC word
 			addTdcValue(TDC_VALUE_MACRO(tActualWord));
 			_nTDCWords++;
-			if (_useTdcTriggerDistance && (TDC_TRIG_DIST_MACRO(tActualWord) > _maxTdcDelay)){  // if TDC trigger to TDC signal distance > _maxTdcDelay the TDC word is ingored
+			if (_useTdcTriggerDistance && (TDC_TRIG_DIST_MACRO(tActualWord) > _maxTdcDelay)){  // if TDC trigger to TDC signal distance > _maxTdcDelay the TDC word is ignored
 				if (Basis::debugSet())
 					debug(std::string(" ") + IntToStr(_nDataWords) + "IGNORING TDC WORD - EXCEEDING _maxTdcDelay - TDC VALUE" + IntToStr(TDC_VALUE_MACRO(tActualWord)) + "\t" + LongIntToStr(_nEvents) + "\t TDC DISTANCE " + IntToStr(TDC_TRIG_DIST_MACRO(tActualWord)) + "\t WORD " + IntToStr(tActualWord));
 				continue;
