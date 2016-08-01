@@ -146,7 +146,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			_nTriggers++; // increase global trigger word counter
 			if (_alignAtTriggerNumber) { // use trigger number for event building, first word is trigger word in event data stream
 				// check for _firstTriggerNrSet, prevent building new event for the very first trigger word
-				if (_firstTriggerNrSet && tNdataHeader > _NbCID) { // for old data where trigger word (first raw data word) might be missing
+				if (!_firstTriggerNrSet && tNdataHeader >= _NbCID) { // for old data where trigger word (first raw data word) might be missing
 					if (Basis::infoSet())
 						info("interpretRawData: " + IntToStr(_nDataWords) + " TW " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tNdataHeader) + ">" + IntToStr(_NbCID) + " at event " + LongIntToStr(_nEvents) +  " missing trigger (adding new event)");
 					addEventErrorCode(__NO_TRG_WORD);
