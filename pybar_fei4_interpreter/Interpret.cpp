@@ -163,11 +163,9 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 				else if (_firstTriggerNrSet) { // usually the case
 					addEvent();
 				}
-			else { // first word is not always the trigger number
+			} else { // properly set trigger number when building after FE event structure
 				if (tNdataHeader > _NbCID - 1)
 					addEvent();
-			}
-
 			}
 			tTriggerWord++; // increase event trigger word counter
 
