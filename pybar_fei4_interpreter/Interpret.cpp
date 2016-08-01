@@ -243,10 +243,12 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					// Only set event error code if a valid TCD word appear after the first TDC word of an event.
 					if (_useTdcTriggerDistance) {
 						if (TDC_TRIG_DIST_MACRO(tActualWord) < 255 && TDC_VALUE_MACRO(tActualWord) > 0) { // when using TDC distance a valid TDC word has a TDC distance < 255 and TDC value > 0
-							addEventErrorCode(__MANY_TDC_WORDS); // set event error code becaue a valid TDC word is not the first TDC word of an event
-							if (tTdcTimeStamp == 255 || tTdcCount == 0) { // the first valid TDC word of an event defines the event TDC value and TDC distance
-								tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord);
+							if (tTdcTimeStamp >= 255 || tTdcCount == 0) { // the first valid TDC word of an event defines the event TDC value and TDC distance
 								tTdcCount = TDC_VALUE_MACRO(tActualWord);
+								tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord);
+							}
+							else {
+								addEventErrorCode(__MANY_TDC_WORDS); // set event error code because the valid TDC word is not the first valid TDC word of an event
 							}
 						}
 						// ignore all other invalid TDC words with TDC distance == 255 or TDC value == 0, do not set any event error
