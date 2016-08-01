@@ -204,7 +204,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			_nServiceRecords++;
 		}
 		else if (isTdcWord(tActualWord)) { // data word is a TDC word
-			addTdcValue(TDC_COUNT_MACRO(tActualWord));
+			addTdcValue(TDC_VALUE_MACRO(tActualWord));
 			_nTDCWords++;
 			if (_useTdcTriggerDistance && (TDC_TRIG_DIST_MACRO(tActualWord) > _maxTdcDelay)){  // if TDC trigger to TDC signal distance > _maxTdcDelay the TDC word is ingored
 				if (Basis::debugSet())
