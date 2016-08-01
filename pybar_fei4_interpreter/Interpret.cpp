@@ -150,6 +150,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					if (Basis::infoSet())
 						info("interpretRawData: " + IntToStr(_nDataWords) + " TW " + "\t WORD " + IntToStr(tActualWord) + "\t" + IntToStr(tNdataHeader) + ">" + IntToStr(_NbCID) + " at event " + LongIntToStr(_nEvents) +  " missing trigger (adding new event)");
 					addEventErrorCode(__NO_TRG_WORD);
+					// __TRUNC_EVENT is set in code above
 					addEvent();
 				}
 				else if (_firstTriggerNrSet && tNdataHeader < _NbCID) { // when data headers are missing
@@ -191,10 +192,11 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 					warning("interpretRawData: Trigger Number not increasing by 1 (old/new): " + IntToStr(_lastTriggerNumber) + "/" + IntToStr(tTriggerNumber) + " at event " + LongIntToStr(_nEvents));
 			}
 
-			if (tTriggerWord == 1)  			// event trigger number is trigger number of first trigger word within the event
+			// __TRG_NUMBER_MORE_ONE is set in addEvent()
+			if (tTriggerWord == 1) // event trigger number is trigger number of first trigger word within the event
 				tEventTriggerNumber = tTriggerNumber;
 
-			_lastTriggerNumber = tTriggerNumber;
+			_lastTriggerNumber = tTriggerNumber; // for sanity check, check every trigger word
 		}
 		else if (getInfoFromServiceRecord(tActualWord, tActualSRcode, tActualSRcounter)) { //data word is service record
 			if (Basis::debugSet())
