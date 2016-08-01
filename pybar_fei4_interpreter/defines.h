@@ -118,6 +118,7 @@ const unsigned int __MANY_TDC_WORDS=512;		//Event has more than one valid TDC wo
 const unsigned int __TDC_OVERFLOW=1024;			//Event has TDC word indicating a TDC overflow (value overflow in normal use mode and +no in time TDC in TRG delay use mode)
 const unsigned int __NO_HIT=2048;				//Events without any hit, useful for trigger number debugging
 const unsigned int __OTHER_WORD=4096;			//Events with words not related to the FEI4 readout
+const unsigned int __SIGNLE_TDC_AFTER_TRIG=8192;//Event has only one valid TDC word after the trigger word and before the first FE word
 
 //trigger error codes
 const unsigned int __TRG_N_ERROR_CODES=8;		//number of trigger error codes

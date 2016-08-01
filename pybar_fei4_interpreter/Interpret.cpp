@@ -135,6 +135,10 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 				}
 			}
 			tNdataHeader++; // increase event data header counter
+			// there is only one TDC word between trigger word and first data header
+			if (_alignAtTriggerNumber && tNdataHeader == 1 && (tErrorCode & __TDC_WORD) == __TDC_WORD && (tErrorCode & __MANY_TDC_WORDS) != __MANY_TDC_WORDS) {
+				addEventErrorCode(__SIGNLE_TDC_AFTER_TRIG);
+			}
 			if (Basis::debugSet())
 				debug(std::string(" ") + IntToStr(_nDataWords) + " DH " + "\t WORD " + IntToStr(tActualWord) + "\t" + "LVL1ID/BCID " + IntToStr(tActualLVL1ID) + "/" + IntToStr(tActualBCID) + "\t" + LongIntToStr(_nEvents));
 		}
@@ -215,24 +219,23 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 
 			_firstTdcSet = true;
 
-			// Special case when _alignAtTriggerNumber AND _useTdcTriggerDistance is true:
+			// Special case when _alignAtTriggerNumber is true:
 			// Expecting TDC word after the trigger AND before the first data header.
-			// Multiple TDC words after the trigger AND before the first data header will result in __MANY_TDC_WORDS.
-			// Any TDC word that comes after the first data header will be ignored and will NOT result in __MANY_TDC_WORDS or __TDC_OVERFLOW.
+			// Multiple TDC words after the trigger will result in __MANY_TDC_WORDS.
+			// Use TDC value and distance only from the first TDC word whether it is valid or not.
+			// Any additional TDC value and distance will be ignored whether it is valid or not.
 			// See also addEvent().
-			if (_alignAtTriggerNumber && _useTdcTriggerDistance) {
-				if (tNdataHeader == 0) {
-					if ((tErrorCode & __TDC_WORD) == __TDC_WORD) { // if the event has already a TDC word
-						// the first TDC word defines the event TDC value, keep the old values and set the error code
-						addEventErrorCode(__MANY_TDC_WORDS);
-					}
-					else {
-						addEventErrorCode(__TDC_WORD);
-						tTdcCount = TDC_VALUE_MACRO(tActualWord);
-						tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord);
-					}
+			if (_alignAtTriggerNumber) {
+				//if (tNdataHeader == 0) { // ignore all other TDC words that are after the first data header
+				if ((tErrorCode & __TDC_WORD) == __TDC_WORD) { // if the event has already a TDC word
+					addEventErrorCode(__MANY_TDC_WORDS);
 				}
-				// ignore all other TDC words that are after the first data header
+				else { // the first TDC word defines the event TDC value, keep the old values and set the error code
+					addEventErrorCode(__TDC_WORD);
+					tTdcCount = TDC_VALUE_MACRO(tActualWord);
+					tTdcTimeStamp = TDC_TRIG_DIST_MACRO(tActualWord);
+				}
+				//}
 			}
 			else {
 				if ((tErrorCode & __TDC_WORD) == __TDC_WORD) { // if the event has already a TDC word
