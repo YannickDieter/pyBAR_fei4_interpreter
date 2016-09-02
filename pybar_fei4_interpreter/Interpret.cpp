@@ -9,6 +9,7 @@ Interpret::Interpret(void)
 	allocateTriggerErrorCounterArray();
 	allocateErrorCounterArray();
 	allocateTdcCounterArray();
+	allocateTdcDistanceArray();
 	allocateServiceRecordCounterArray();
 	reset();
 }
@@ -21,6 +22,7 @@ Interpret::~Interpret(void)
 	deleteTriggerErrorCounterArray();
 	deleteErrorCounterArray();
 	deleteTdcCounterArray();
+	deleteTdcDistanceArray();
 	deleteServiceRecordCounterArray();
 }
 
@@ -201,6 +203,9 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 		}
 		else if (isTdcWord(tActualWord)) { // data word is a TDC word
 			addTdcValue(TDC_COUNT_MACRO(tActualWord));
+			if (_useTdcTriggerTimeStamp) { // TDC trigger distance, 255 is invalid TDC
+				addTdcDistanceValue(TDC_TRIG_DIST_MACRO(tActualWord));
+			}
 			_nTDCWords++;
 			if (_useTdcTriggerTimeStamp && (TDC_TRIG_DIST_MACRO(tActualWord) > _maxTdcDelay)){  // of the trigger distance if > _maxTdcDelay the TDC word does not belong to this event, thus ignore it
 				if (Basis::debugSet())
@@ -438,6 +443,7 @@ void Interpret::resetCounters()
 	resetTriggerErrorCounterArray();
 	resetErrorCounterArray();
 	resetTdcCounterArray();
+	resetTdcDistanceArray();
 	resetServiceRecordCounterArray();
 }
 
@@ -467,6 +473,7 @@ void Interpret::resetHistograms()
 	resetTriggerErrorCounterArray();
 	resetErrorCounterArray();
 	resetTdcCounterArray();
+	resetTdcDistanceArray();
 	resetServiceRecordCounterArray();
 }
 
@@ -805,11 +812,13 @@ void Interpret::addEvent()
 		if (Basis::warningSet())
 			warning(std::string("addEvent: # trigger words > 1 at event " + LongIntToStr(_nEvents)));
 	}
-	if (_useTdcTriggerTimeStamp && tTdcTimeStamp == 254) // TDC trigger distance, 254 is TDC distance overflow
+	if (_useTdcTriggerTimeStamp && tTdcTimeStamp == 254) { // TDC trigger distance, 254 is TDC distance overflow
 		addEventErrorCode(__TDC_OVERFLOW);
+	}
 
-	if (_useTdcTriggerTimeStamp && tTdcTimeStamp >= 255) // TDC trigger distance, 255 is invalid TDC
+	if (_useTdcTriggerTimeStamp && tTdcTimeStamp >= 255) { // TDC trigger distance, 255 is invalid TDC
 		addEventErrorCode(__MANY_TDC_WORDS);
+	}
 
 	storeEventHits();
 	if (tTotalHits > _nMaxHitsPerEvent)
@@ -1134,10 +1143,16 @@ void Interpret::addServiceRecord(const unsigned char& pSRcode, const unsigned in
 		_serviceRecordCounter[pSRcode] += pSRcounter;
 }
 
-void Interpret::addTdcValue(const unsigned short& pTdcCode)
+void Interpret::addTdcValue(const unsigned short& pTdcValue)
 {
-	if (pTdcCode < __N_TDC_VALUES)
-		_tdcCounter[pTdcCode] += 1;
+	if (pTdcValue < __N_TDC_VALUES)
+		_tdcCounter[pTdcValue] += 1;
+}
+
+void Interpret::addTdcDistanceValue(const unsigned short& pTdcDistanceValue)
+{
+	if (pTdcDistanceValue < __N_TDC_DIST_VALUES)
+		_tdcTriggerDistance[pTdcDistanceValue] += 1;
 }
 
 void Interpret::allocateHitArray()
@@ -1225,6 +1240,16 @@ void Interpret::allocateTdcCounterArray()
 	}
 }
 
+void Interpret::allocateTdcDistanceArray()
+{
+	debug(std::string("allocateTdcDistanceArray()"));
+	try {
+		_tdcTriggerDistance = new unsigned int[__N_TDC_DIST_VALUES];
+	} catch (std::bad_alloc& exception) {
+		error(std::string("allocateTdcDistanceArray(): ") + std::string(exception.what()));
+	}
+}
+
 void Interpret::resetErrorCounterArray()
 {
 	for (unsigned int i = 0; i < __N_ERROR_CODES; ++i)
@@ -1235,6 +1260,12 @@ void Interpret::resetTdcCounterArray()
 {
 	for (unsigned int i = 0; i < __N_TDC_VALUES; ++i)
 		_tdcCounter[i] = 0;
+}
+
+void Interpret::resetTdcDistanceArray()
+{
+	for (unsigned int i = 0; i < __N_TDC_DIST_VALUES; ++i)
+		_tdcTriggerDistance[i] = 0;
 }
 
 void Interpret::deleteErrorCounterArray()
@@ -1253,6 +1284,15 @@ void Interpret::deleteTdcCounterArray()
 		return;
 	delete[] _tdcCounter;
 	_tdcCounter = 0;
+}
+
+void Interpret::deleteTdcDistanceArray()
+{
+	debug(std::string("deleteTdcDistanceArray()"));
+	if (_tdcTriggerDistance == 0)
+		return;
+	delete[] _tdcTriggerDistance;
+	_tdcTriggerDistance = 0;
 }
 
 void Interpret::allocateServiceRecordCounterArray()
