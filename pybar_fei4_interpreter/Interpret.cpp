@@ -591,6 +591,17 @@ void Interpret::getTdcCounters(unsigned int*& rTdcCounter, unsigned int& rNtdcCo
 	rNtdcCounters = __N_TDC_VALUES;
 }
 
+void Interpret::getTdcTriggerDistance(unsigned int*& rTdcTriggerDistance, unsigned int& rNtdcTriggerDistance, bool copy)
+{
+	debug("getErrorCounters(...)");
+	if (copy)
+		std::copy(_tdcTriggerDistance, _tdcTriggerDistance + __N_TDC_DIST_VALUES, rTdcTriggerDistance);
+	else
+		rTdcTriggerDistance = _tdcTriggerDistance;
+
+	rNtdcTriggerDistance = __N_TDC_DIST_VALUES;
+}
+
 void Interpret::getTriggerErrorCounters(unsigned int*& rTriggerErrorCounter, unsigned int& rNTriggerErrorCounters, bool copy)
 {
 	debug(std::string("getTriggerErrorCounters(...)"));

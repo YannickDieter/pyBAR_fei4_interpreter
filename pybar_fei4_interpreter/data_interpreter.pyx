@@ -55,6 +55,7 @@ cdef extern from "Interpret.h":
         void getErrorCounters(unsigned int*& rErrorCounter, unsigned int& rNerrorCounters, cpp_bool copy)  # returns the total errors counter array
         void getTriggerErrorCounters(unsigned int*& rTriggerErrorCounter, unsigned int& rNTriggerErrorCounters, cpp_bool copy)  # returns the total trigger errors counter array
         void getTdcCounters(unsigned int*& rTdcCounter, unsigned int& rNtdcCounters, cpp_bool copy)
+        void getTdcTriggerDistance(unsigned int*& rTdcTriggerDistance, unsigned int& rNtdcTriggerDistance, cpp_bool copy)
         unsigned int getNarrayHits()  # returns the maximum index filled with hits in the hit array
         unsigned int getNmetaDataEvent()  # returns the maximum index filled with event data infos
         unsigned int getNmetaDataWord()
@@ -153,6 +154,10 @@ cdef class PyDataInterpreter:
             return data_to_numpy_array_uint32(data_32, n_entries)
     def get_tdc_counters(self):
         self.thisptr.getTdcCounters(<unsigned int*&> data_32, <unsigned int&> n_entries, <cpp_bool> False)
+        if data_32 != NULL:
+            return data_to_numpy_array_uint32(data_32, n_entries)
+    def get_tdc_distance(self):
+        self.thisptr.getTdcTriggerDistance(<unsigned int*&> data_32, <unsigned int&> n_entries, <cpp_bool> False)
         if data_32 != NULL:
             return data_to_numpy_array_uint32(data_32, n_entries)
     def get_n_array_hits(self):
