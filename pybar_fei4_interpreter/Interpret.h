@@ -61,6 +61,7 @@ public:
 	void getErrorCounters(unsigned int*& rErrorCounter, unsigned int &rNerrorCounters, bool copy = false);                      //returns the total errors counter array
 	void getTriggerErrorCounters(unsigned int*& rTriggerErrorCounter, unsigned int &rNTriggerErrorCounters, bool copy = false); //returns the total trigger errors counter array
 	void getTdcCounters(unsigned int*& rTdcCounter, unsigned int& rNtdcCounters, bool copy = false); //returns the TDC counter array
+	void getTdcTriggerDistance(unsigned int*& rTdcTriggerDistance, unsigned int& rNtdcTriggerDistance, bool copy = false); //returns the TDC trigger distance array
 	unsigned int getNhits(){return _nHits;};                 //returns the total numbers of hits found (global counter)
 	unsigned int getNwords();                                //returns the total numbers of words analyzed (global counter)
 	unsigned int getNunknownWords(){return _nUnknownWords;}; //returns the total numbers of unknown words found (global counter)
@@ -215,6 +216,7 @@ private:
 	unsigned int* _triggerErrorCounter;      //trigger error histogram
 	unsigned int* _errorCounter;             //error code histogram
 	unsigned int* _tdcCounter;             	 //TDC counter value histogram
+	unsigned int* _tdcTriggerDistance;       //TDC counter value histogram
 	unsigned int* _serviceRecordCounter;     //SR histogram
 
 	// temporary variables set according to the actual SRAM word

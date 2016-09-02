@@ -559,6 +559,17 @@ void Interpret::getTdcCounters(unsigned int*& rTdcCounter, unsigned int& rNtdcCo
 	rNtdcCounters = __N_TDC_VALUES;
 }
 
+void Interpret::getTdcTriggerDistance(unsigned int*& rTdcTriggerDistance, unsigned int& rNtdcTriggerDistance, bool copy = false)
+{
+	debug("getErrorCounters(...)");
+	if (copy)
+		std::copy(_tdcTriggerDistance, _tdcTriggerDistance + __N_TDC_DIST_VALUES, rTdcTriggerDistance);
+	else
+		rTdcTriggerDistance = _tdcTriggerDistance;
+
+	rNtdcTriggerDistance = __N_TDC_DIST_VALUES;
+}
+
 void Interpret::getTriggerErrorCounters(unsigned int*& rTriggerErrorCounter, unsigned int& rNTriggerErrorCounters, bool copy)
 {
 	debug(std::string("getTriggerErrorCounters(...)"));
@@ -794,8 +805,11 @@ void Interpret::addEvent()
 		if (Basis::warningSet())
 			warning(std::string("addEvent: # trigger words > 1 at event " + LongIntToStr(_nEvents)));
 	}
-	if (_useTdcTriggerTimeStamp && tTdcTimeStamp >= 254)
+	if (_useTdcTriggerTimeStamp && tTdcTimeStamp == 254) // TDC trigger distance, 254 is TDC distance overflow
 		addEventErrorCode(__TDC_OVERFLOW);
+
+	if (_useTdcTriggerTimeStamp && tTdcTimeStamp >= 255) // TDC trigger distance, 255 is invalid TDC
+		addEventErrorCode(__MANY_TDC_WORDS);
 
 	storeEventHits();
 	if (tTotalHits > _nMaxHitsPerEvent)

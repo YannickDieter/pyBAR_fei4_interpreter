@@ -40,6 +40,7 @@ void Histogram::setStandardSettings()
 	_createTotHist = false;
 	_createMeanTotHist = false;
 	_createTdcHist = false;
+	_createTdcTriggerDistanceHist = false;
 	_createTdcPixelHist = false;
 	_createTotPixelHist = false;
 	_maxTot = 13;
@@ -150,7 +151,7 @@ void Histogram::addHits(HitInfo*& rHitInfo, const unsigned int& rNhits)
 		unsigned int tTdc = rHitInfo[i].TDC;
 		if(tTdc >= __N_TDC_VALUES)
 			throw std::out_of_range("TDC value " + IntToStr(tTdc) + " index out of range.");
-		unsigned int tTdcTriggerDistance = rHitInfo[i].TDC_time_stamp;
+		unsigned int tTdcTriggerDistance = rHitInfo[i].TDC_time_stamp; // when using TDC trigger distance, use TDC timestamp 
 		if(tTdcTriggerDistance >= __N_TDC_DIST_VALUES)
 			throw std::out_of_range("TDC distance " + IntToStr(tTdc) + " index out of range.");
 		unsigned int tRelBcid = rHitInfo[i].relative_BCID;
@@ -192,7 +193,7 @@ void Histogram::addHits(HitInfo*& rHitInfo, const unsigned int& rNhits)
 		if(_createTdcHist)
 			_tdc[tTdc] += 1;
 		if(_createTdcTriggerDistanceHist)
-			_tdc[tTdcTriggerDistance] += 1;
+			_tdcTriggerDistance[tTdcTriggerDistance] += 1;
 		if(_createTdcPixelHist){
 			if (_tdcPixel != 0){
 				 if(tTdc >= __N_TDC_PIXEL_VALUES){

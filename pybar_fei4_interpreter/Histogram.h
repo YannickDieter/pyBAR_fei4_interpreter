@@ -20,7 +20,7 @@ public:
 	void getTotHist(unsigned int*& rTotHist, bool copy = false); //returns the tot histogram for all hits
 	void getMeanTot(unsigned int& rNparameterValues, float*& rMeanTot, bool copy = false); //returns mean ToT per scan parameter for each pixel
 	void getTdcHist(unsigned int*& rTdcHist, bool copy = false); //returns the tdc histogram for all hits
-	void getTdcTriggerDistanceHist(unsigned int*& rTdcTriggerDistanceHist, bool copy = false); //returns the tdc histogram for all hits
+	void getTdcTriggerDistanceHist(unsigned int*& rTdcTriggerDistanceHist, bool copy = false); //returns the tdc trigger distance histogram for all hits
 	void getRelBcidHist(unsigned int*& rRelBcidHist, bool copy = false); //returns the relative BCID histogram for all hits
 	void getTotPixelHist(unsigned short*& rTotPixelHist, bool copy = false); //returns the tot pixel histogram
 	void getTdcPixelHist(unsigned short*& rTdcPixelHist, bool copy = false); //returns the tdc pixel histogram
@@ -82,7 +82,7 @@ private:
 	unsigned int* _tot;					//ToT histogram
 	float* _meanTot;					//2d hit mean ToT histogram for each parameter
 	unsigned int* _tdc;					//TDC histogram
-	unsigned int* _tdcTriggerDistance;	//TDC distance histogram
+	unsigned int* _tdcTriggerDistance;	//TDC trigger distance histogram
 	unsigned short* _tdcPixel;			//3d pixel TDC histogram (in total 3d, linearly sorted via col, row, tdc value)
 	unsigned short* _totPixel;			//3d pixel ToT histogram (in total 3d, linearly sorted via col, row, tot value)
 	unsigned int* _relBcid;				//relative BCID histogram

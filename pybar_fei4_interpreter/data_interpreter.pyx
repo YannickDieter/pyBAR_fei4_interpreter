@@ -155,6 +155,10 @@ cdef class PyDataInterpreter:
         self.thisptr.getTdcCounters(<unsigned int*&> data_32, <unsigned int&> n_entries, <cpp_bool> False)
         if data_32 != NULL:
             return data_to_numpy_array_uint32(data_32, n_entries)
+    def get_tdc_distance(self):
+        self.thisptr.getTdcTriggerDistance(<unsigned int*&> data_32, <unsigned int&> n_entries, <cpp_bool> False)
+        if data_32 != NULL:
+            return data_to_numpy_array_uint32(data_32, n_entries)
     def get_n_array_hits(self):
         return <unsigned int> self.thisptr.getNarrayHits()
     def get_n_meta_data_word(self):
