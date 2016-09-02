@@ -559,7 +559,7 @@ void Interpret::getTdcCounters(unsigned int*& rTdcCounter, unsigned int& rNtdcCo
 	rNtdcCounters = __N_TDC_VALUES;
 }
 
-void Interpret::getTdcTriggerDistance(unsigned int*& rTdcTriggerDistance, unsigned int& rNtdcTriggerDistance, bool copy = false)
+void Interpret::getTdcTriggerDistance(unsigned int*& rTdcTriggerDistance, unsigned int& rNtdcTriggerDistance, bool copy)
 {
 	debug("getErrorCounters(...)");
 	if (copy)
