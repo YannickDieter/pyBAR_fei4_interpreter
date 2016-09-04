@@ -206,7 +206,7 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 			_nServiceRecords++;
 		}
 		else if (isTdcWord(tActualWord)) { // data word is a TDC word
-			addTdcValue(TDC_COUNT_MACRO(tActualWord));
+			addTdcValue(TDC_VALUE_MACRO(tActualWord));
 			if (_useTdcTriggerDistance) { // TDC trigger distance, 255 is invalid TDC
 				addTdcDistanceValue(TDC_TRIG_DIST_MACRO(tActualWord));
 			}
@@ -848,7 +848,6 @@ void Interpret::addEvent()
 		addEventErrorCode(__MANY_TDC_WORDS); // use __MANY_TDC_WORDS for overlapping TDC values
 	if ((tErrorCode & __TDC_WORD) == __TDC_WORD && tTdcCount >= 4095)
 		addEventErrorCode(__TDC_OVERFLOW);
-	}
 
 	storeEventHits();
 	if (tTotalHits > _nMaxHitsPerEvent)
