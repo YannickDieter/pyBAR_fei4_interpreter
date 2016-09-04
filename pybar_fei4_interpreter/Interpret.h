@@ -106,7 +106,8 @@ private:
 	void histogramTriggerErrorCode();                                                       //adds the event trigger error code to the histogram
 	void histogramErrorCode();                                                              //adds the event error code to the histogram
 	void addServiceRecord(const unsigned char& pSRcode, const unsigned int& pSRcounter);    //adds the service record code to SR histogram
-	void addTdcValue(const unsigned short& pTdcCode);                           			//adds the TDC count code to TDC histogram
+	void addTdcValue(const unsigned short& pTdcValue);                           			//adds the TDC value to TDC histogram
+	void addTdcDistanceValue(const unsigned short& pTdcDistanceValue);						//adds the TDC distance value to TDC histogram
 
 	// memory allocation/initialization
 	void setStandardSettings();
@@ -121,8 +122,11 @@ private:
 	void resetErrorCounterArray();
 	void deleteErrorCounterArray();
 	void allocateTdcCounterArray();
+	void allocateTdcDistanceArray();
 	void resetTdcCounterArray();
+	void resetTdcDistanceArray();
 	void deleteTdcCounterArray();
+	void deleteTdcDistanceArray();
 	void allocateServiceRecordCounterArray();
 	void resetServiceRecordCounterArray();
 	void deleteServiceRecordCounterArray();
