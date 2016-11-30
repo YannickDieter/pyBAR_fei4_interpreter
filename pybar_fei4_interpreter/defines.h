@@ -145,11 +145,15 @@ const unsigned int RAW_DATA_MAX_ROW=336;
 
 //trigger word macros
 #define TRIGGER_WORD_HEADER_MASK_NEW 0x80000000 // 1xxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx, x may contain user data
-#define TRIGGER_NUMBER_MASK_NEW		0x0000FFFF //trigger number is in the low word
-#define TRIGGER_TIME_STAMP_MASK		0x7FFF0000 //trigger number is in the low word
+#define TRIGGER_NUMBER_MASK_NEW		0x7FFFFFFF //trigger number is in the low word
+#define TRIGGER_TIME_STAMP_MASK		0x7FFFFFFF //trigger number is in the low word
+#define TRIGGER_NUMBER_MASK_M26		0x0000FFFF //trigger number of M26
+#define TRIGGER_TIME_STAMP_MASK_M26		0x7FFF0000 //time stamp of M26
 #define TRIGGER_WORD_MACRO_NEW(X)	(((TRIGGER_WORD_HEADER_MASK_NEW & X) == TRIGGER_WORD_HEADER_MASK_NEW) ? true : false) //true if data word is trigger word
 #define TRIGGER_NUMBER_MACRO_NEW(X)	(TRIGGER_NUMBER_MASK_NEW & X) //calculates the trigger number from a trigger word
 #define TRIGGER_TIME_STAMP_MACRO(X)	(TRIGGER_TIME_STAMP_MASK & X) //calculates the trigger time stamp from a trigger word
+#define TRIGGER_NUMBER_MACRO_M26(X)	(TRIGGER_NUMBER_MASK_M26 & X) //calculates the trigger number from a trigger word for M26
+#define TRIGGER_TIME_STAMP_MACRO_M26(X)	(TRIGGER_TIME_STAMP_MASK_M26 & X) //calculates the time stamp from a trigger word for M26
 
 //TDC macros
 #define __N_TDC_VALUES 4096
