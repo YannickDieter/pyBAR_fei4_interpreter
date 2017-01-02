@@ -62,7 +62,7 @@ cdef extern from "Interpret.h":
         void alignAtTriggerNumber(cpp_bool alignAtTriggerNumber)
         void alignAtTdcWord(cpp_bool alignAtTdcWord)
         void useTriggerTimeStamp(cpp_bool useTriggerTimeStamp)
-        void setTriggerFormat(const char *rTriggerFormat)
+        void setTriggerFormat(const unsigned int& rTriggerFormat)
         void setMaxTdcDelay(const unsigned int& rMaxTdcDelay)
         void useTdcTriggerTimeStamp(cpp_bool useTdcTriggerTimeStamp)
         void setMaxTriggerNumber(const unsigned int& rMaxTriggerNumber)
@@ -170,7 +170,7 @@ cdef class PyDataInterpreter:
     def align_at_tdc(self, use_tdc_word):
         self.thisptr.alignAtTdcWord(<cpp_bool> use_tdc_word)
     def set_trigger_format(self, trigger_format):
-        self.thisptr.setTriggerFormat(<const char*> trigger_format)    
+        self.thisptr.setTriggerFormat(<const unsigned int&> trigger_format)    
     def use_trigger_time_stamp(self, use_trigger_time_stamp):
         self.thisptr.useTriggerTimeStamp(<cpp_bool> use_trigger_time_stamp)
     def use_tdc_trigger_time_stamp(self, use_tdc_trigger_time_stamp):
