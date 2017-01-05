@@ -168,18 +168,19 @@ bool Interpret::interpretRawData(unsigned int* pDataWords, const unsigned int& p
 
 			}
 			tTriggerWord++; // increase event trigger word counter
+
 			if (_TriggerFormat == 0) { // TRIGGER COUNTER mode
-							tTriggerNumber = TRIGGER_NUMBER_MACRO_NEW(tActualWord); // 31 bit trigger number
-						    _TriggerMode = "TRIGGER COUNTER"; // set string for output
-						}
-						else if (_TriggerFormat == 1) { // TIMESTAMP mode
-							tTriggerNumber = TRIGGER_TIME_STAMP_MACRO(tActualWord); // 31 bit time stamp
-							_TriggerMode = "TIMESTAMP"; // set string for output
-						}
-						else if (_TriggerFormat == 2) { // COMBINED trigger mode
-							tTriggerNumber = TRIGGER_NUMBER_MACRO_COMBINED(tActualWord); // 15 bit time stamp + 16 bit trigger number
-							_TriggerMode = "COMBINED"; // set string for output
-						}
+				tTriggerNumber = TRIGGER_NUMBER_MACRO_NEW(tActualWord); // 31 bit trigger number
+				_TriggerMode = "TRIGGER COUNTER"; // set string for output
+			}
+			else if (_TriggerFormat == 1) { // TIMESTAMP mode
+				tTriggerNumber = TRIGGER_TIME_STAMP_MACRO(tActualWord); // 31 bit time stamp
+				_TriggerMode = "TIMESTAMP"; // set string for output
+			}
+			else if (_TriggerFormat == 2) { // COMBINED trigger mode
+				tTriggerNumber = TRIGGER_NUMBER_MACRO_COMBINED(tActualWord); // 15 bit time stamp + 16 bit trigger number
+				_TriggerMode = "COMBINED"; // set string for output
+			}
 			if (Basis::debugSet()) {
 				if (_TriggerFormat == 2 || _TriggerFormat == 0)
 					debug(std::string(" ") + IntToStr(_nDataWords) + " TR NUMBER " + IntToStr(tTriggerNumber) + "\t WORD " + IntToStr(tActualWord) + "\t" + LongIntToStr(_nEvents));
